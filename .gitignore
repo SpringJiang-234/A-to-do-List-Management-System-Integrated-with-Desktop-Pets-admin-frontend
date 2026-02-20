@@ -20,3 +20,6 @@ tests/**/coverage/
 *.njsproj
 *.sln
 tsconfig.tsbuildinfo
+
+# Temporary resources
+临时资源记得删/
