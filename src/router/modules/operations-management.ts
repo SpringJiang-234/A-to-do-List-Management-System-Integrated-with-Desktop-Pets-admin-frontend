@@ -11,7 +11,9 @@ export default {
       path: "/operations-management/announcement-management",
       name: "AnnouncementManagement",
       component: () =>
-        import("@/views/operations-management/announcement-management.vue"),
+        import(
+          "@/views/operations-management/announcement-management/index.vue"
+        ),
       meta: {
         title: "公告管理"
       }
@@ -20,7 +22,7 @@ export default {
       path: "/operations-management/feedback-management",
       name: "FeedbackManagement",
       component: () =>
-        import("@/views/operations-management/feedback-management.vue"),
+        import("@/views/operations-management/feedback-management/index.vue"),
       meta: {
         title: "反馈管理"
       }
@@ -29,7 +31,7 @@ export default {
       path: "/operations-management/user-management",
       name: "UserManagement",
       component: () =>
-        import("@/views/operations-management/user-management.vue"),
+        import("@/views/operations-management/user-management/index.vue"),
       meta: {
         title: "用户管理"
       }
@@ -38,7 +40,9 @@ export default {
       path: "/operations-management/desktop-pet-management",
       name: "DesktopPetManagement",
       component: () =>
-        import("@/views/operations-management/desktop-pet-management.vue"),
+        import(
+          "@/views/operations-management/desktop-pet-management/index.vue"
+        ),
       meta: {
         title: "桌宠管理"
       }

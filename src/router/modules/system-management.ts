@@ -10,7 +10,7 @@ export default {
     {
       path: "/system-management/audit-logs",
       name: "AuditLogs",
-      component: () => import("@/views/system-management/audit-logs.vue"),
+      component: () => import("@/views/system-management/audit-logs/index.vue"),
       meta: {
         title: "审计日志"
       }
@@ -18,7 +18,7 @@ export default {
     {
       path: "/system-management/about",
       name: "About",
-      component: () => import("@/views/system-management/about.vue"),
+      component: () => import("@/views/system-management/about/index.vue"),
       meta: {
         title: "关于我们"
       }
