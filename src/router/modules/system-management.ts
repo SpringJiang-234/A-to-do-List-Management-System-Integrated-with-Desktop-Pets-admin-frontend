@@ -1,6 +1,6 @@
 export default {
   path: "/system-management",
-  redirect: "/system-management/about",
+  redirect: "/system-management/audit-logs",
   meta: {
     icon: "carbon:cloud-service-management",
     title: "系统管理",
@@ -8,19 +8,19 @@ export default {
   },
   children: [
     {
-      path: "/system-management/about",
-      name: "About",
-      component: () => import("@/views/system-management/about.vue"),
-      meta: {
-        title: "关于我们"
-      }
-    },
-    {
       path: "/system-management/audit-logs",
       name: "AuditLogs",
       component: () => import("@/views/system-management/audit-logs.vue"),
       meta: {
         title: "审计日志"
+      }
+    },
+    {
+      path: "/system-management/about",
+      name: "About",
+      component: () => import("@/views/system-management/about.vue"),
+      meta: {
+        title: "关于我们"
       }
     }
   ]
