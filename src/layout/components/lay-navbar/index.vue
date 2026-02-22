@@ -9,6 +9,8 @@ import LaySidebarTopCollapse from "../lay-sidebar/components/SidebarTopCollapse.
 
 import LogoutCircleRLine from "~icons/ri/logout-circle-r-line";
 import Setting from "~icons/ri/settings-3-line";
+import RiUserLine from "~icons/ri/user-line";
+import RiLockPasswordLine from "~icons/ri/lock-password-line";
 
 const {
   layout,
@@ -54,6 +56,17 @@ const {
         </span>
         <template #dropdown>
           <el-dropdown-menu class="logout">
+            <el-dropdown-item @click="logout">
+              <IconifyIconOffline :icon="RiUserLine" style="margin: 5px" />
+              个人资料
+            </el-dropdown-item>
+            <el-dropdown-item @click="logout">
+              <IconifyIconOffline
+                :icon="RiLockPasswordLine"
+                style="margin: 5px"
+              />
+              修改密码
+            </el-dropdown-item>
             <el-dropdown-item @click="logout">
               <IconifyIconOffline
                 :icon="LogoutCircleRLine"
