@@ -26,6 +26,8 @@ const getConfig = (key?: string): PlatformConfigs => {
   return config;
 };
 
+export const TABLE_HEIGHT = 630;
+
 /** 获取项目动态全局配置 */
 export const getPlatformConfig = async (app: App): Promise<undefined> => {
   app.config.globalProperties.$config = getConfig();

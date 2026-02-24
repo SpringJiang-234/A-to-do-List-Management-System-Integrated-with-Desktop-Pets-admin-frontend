@@ -7,6 +7,7 @@ import {
   type FieldValues,
   PlusSearch
 } from "plus-pro-components";
+import { TABLE_HEIGHT } from "@/config";
 
 const state = ref<FieldValues>({
   title: "",
@@ -118,7 +119,7 @@ const {
         showOverflowTooltip
         :loading="loading"
         :loading-config="loadingConfig"
-        :height="630"
+        :height="TABLE_HEIGHT"
         :data="
           dataList.slice(
             (pagination.currentPage - 1) * pagination.pageSize,
