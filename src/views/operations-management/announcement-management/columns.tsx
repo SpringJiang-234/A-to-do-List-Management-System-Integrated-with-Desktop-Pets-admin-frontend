@@ -40,14 +40,14 @@ export function useColumns() {
       cellRenderer: ({ index, row }) => (
         <>
           <el-button size="small" onClick={() => handleEdit(index + 1, row)}>
-            Edit
+            编辑
           </el-button>
           <el-button
             size="small"
             type="danger"
             onClick={() => handleDelete(index + 1, row)}
           >
-            Delete
+            删除
           </el-button>
         </>
       )

@@ -118,7 +118,7 @@ const {
         showOverflowTooltip
         :loading="loading"
         :loading-config="loadingConfig"
-        :height="650"
+        :height="630"
         :data="
           dataList.slice(
             (pagination.currentPage - 1) * pagination.pageSize,
