@@ -39,7 +39,11 @@ export function useColumns() {
       label: "操作",
       cellRenderer: ({ index, row }) => (
         <>
-          <el-button size="small" onClick={() => handleEdit(index + 1, row)}>
+          <el-button
+            size="small"
+            type="warning"
+            onClick={() => handleEdit(index + 1, row)}
+          >
             编辑
           </el-button>
           <el-button
