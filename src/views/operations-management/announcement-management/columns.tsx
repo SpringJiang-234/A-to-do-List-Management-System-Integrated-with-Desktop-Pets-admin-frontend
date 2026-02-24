@@ -2,6 +2,7 @@ import { tableData } from "./data";
 import { clone, delay } from "@pureadmin/utils";
 import { ref, onMounted, reactive } from "vue";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
+import { message } from "@/utils/message";
 
 export function useColumns() {
   const dataList = ref([]);
@@ -15,16 +16,41 @@ export function useColumns() {
       hide: () => (select.value === "no" ? true : false)
     },
     {
-      label: "日期",
-      prop: "date"
+      label: "标题",
+      prop: "title"
     },
     {
-      label: "姓名",
-      prop: "name"
+      label: "内容",
+      prop: "content"
     },
     {
-      label: "地址",
-      prop: "address"
+      label: "是否置顶",
+      prop: "isTop"
+    },
+    {
+      label: "发布时间",
+      prop: "createTime"
+    },
+    {
+      label: "更新时间",
+      prop: "updateTime"
+    },
+    {
+      label: "操作",
+      cellRenderer: ({ index, row }) => (
+        <>
+          <el-button size="small" onClick={() => handleEdit(index + 1, row)}>
+            Edit
+          </el-button>
+          <el-button
+            size="small"
+            type="danger"
+            onClick={() => handleDelete(index + 1, row)}
+          >
+            Delete
+          </el-button>
+        </>
+      )
     }
   ];
 
@@ -86,6 +112,16 @@ export function useColumns() {
       loading.value = false;
     });
   });
+
+  const handleEdit = (index: number, row) => {
+    message(`您修改了第 ${index} 行，数据为：${JSON.stringify(row)}`, {
+      type: "success"
+    });
+  };
+
+  const handleDelete = (index: number, row) => {
+    message(`您删除了第 ${index} 行，数据为：${JSON.stringify(row)}`);
+  };
 
   return {
     loading,
