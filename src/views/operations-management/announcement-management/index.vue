@@ -8,7 +8,7 @@ import {
   PlusSearch
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
-import { ElButton } from "element-plus";
+import { TableActions } from "@/components/admin-frontend-components/TableActions";
 
 const state = ref<FieldValues>({
   title: "",
@@ -129,12 +129,12 @@ const {
       />
     </div>
 
-    <div class="action-buttons">
-      <el-button type="primary" @click="handleAdd">新增</el-button>
-      <el-button type="primary" @click="handleImport">导入 Excel</el-button>
-      <el-button type="primary" @click="handleExport">导出 Excel</el-button>
-      <el-button type="danger" @click="handleBatchDelete">批量删除</el-button>
-    </div>
+    <TableActions
+      :on-add="handleAdd"
+      :on-import="handleImport"
+      :on-export="handleExport"
+      :on-batch-delete="handleBatchDelete"
+    />
 
     <div>
       <pure-table
@@ -163,12 +163,5 @@ const {
 <style scoped>
 .announcement-container {
   margin: 10px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-start;
-  margin: 10px 0;
 }
 </style>
