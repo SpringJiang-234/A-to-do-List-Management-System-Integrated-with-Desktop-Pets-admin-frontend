@@ -7,7 +7,7 @@ import { message } from "@/utils/message";
 export function useColumns() {
   const dataList = ref([]);
   const loading = ref(true);
-  const select = ref("no");
+  const select = ref("yes");
   const columns: TableColumnList = [
     {
       type: "selection",
@@ -39,6 +39,13 @@ export function useColumns() {
       label: "操作",
       cellRenderer: ({ index, row }) => (
         <>
+          <el-button
+            size="small"
+            type="info"
+            onClick={() => handleDetail(index + 1, row)}
+          >
+            详情
+          </el-button>
           <el-button
             size="small"
             type="warning"
@@ -116,6 +123,12 @@ export function useColumns() {
       loading.value = false;
     });
   });
+
+  const handleDetail = (index: number, row) => {
+    message(`您查看了第 ${index} 行的详情，数据为：${JSON.stringify(row)}`, {
+      type: "info"
+    });
+  };
 
   const handleEdit = (index: number, row) => {
     message(`您修改了第 ${index} 行，数据为：${JSON.stringify(row)}`, {

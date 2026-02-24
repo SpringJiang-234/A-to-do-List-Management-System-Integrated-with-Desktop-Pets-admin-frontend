@@ -8,6 +8,7 @@ import {
   PlusSearch
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
+import { ElButton } from "element-plus";
 
 const state = ref<FieldValues>({
   title: "",
@@ -86,6 +87,22 @@ const handleRest = () => {
   console.log("handleRest");
 };
 
+const handleAdd = () => {
+  console.log("添加公告");
+};
+
+const handleBatchDelete = () => {
+  console.log("批量删除");
+};
+
+const handleExport = () => {
+  console.log("导出 Excel");
+};
+
+const handleImport = () => {
+  console.log("导入 Excel");
+};
+
 const {
   loading,
   columns,
@@ -111,6 +128,14 @@ const {
         @reset="handleRest"
       />
     </div>
+
+    <div class="action-buttons">
+      <el-button type="primary" @click="handleAdd">新增</el-button>
+      <el-button type="primary" @click="handleImport">导入 Excel</el-button>
+      <el-button type="primary" @click="handleExport">导出 Excel</el-button>
+      <el-button type="danger" @click="handleBatchDelete">批量删除</el-button>
+    </div>
+
     <div>
       <pure-table
         border
@@ -138,5 +163,12 @@ const {
 <style scoped>
 .announcement-container {
   margin: 10px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  margin: 10px 0;
 }
 </style>
