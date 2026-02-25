@@ -41,46 +41,52 @@ export type PageResult<T> = {
 };
 
 export const insertAnnouncement = (data: AnnouncementDTO) => {
-  return http.request<AnnouncementResult>("post", "/announcement/insert", {
+  return http.request<AnnouncementResult>("post", "/api/announcement/insert", {
     data
   });
 };
 
 export const updateAnnouncement = (data: AnnouncementDTO) => {
-  return http.request<AnnouncementResult>("post", "/announcement/update", {
+  return http.request<AnnouncementResult>("post", "/api/announcement/update", {
     data
   });
 };
 
 export const deleteAnnouncement = (id: number) => {
-  return http.request<AnnouncementResult>("get", `/announcement/delete/${id}`);
+  return http.request<AnnouncementResult>(
+    "get",
+    `/api/announcement/delete/${id}`
+  );
 };
 
 export const batchDeleteAnnouncement = (ids: string) => {
   return http.request<AnnouncementResult>(
     "get",
-    `/announcement/batchDelete/${ids}`
+    `/api/announcement/batchDelete/${ids}`
   );
 };
 
 export const getAnnouncementPage = (data: AnnouncementQuery) => {
-  return http.request<AnnouncementResult>("post", "/announcement/page", {
+  return http.request<AnnouncementResult>("post", "/api/announcement/page", {
     data
   });
 };
 
 export const getAnnouncementDetails = (id: number) => {
-  return http.request<AnnouncementResult>("get", `/announcement/details/${id}`);
+  return http.request<AnnouncementResult>(
+    "get",
+    `/api/announcement/details/${id}`
+  );
 };
 
 export const exportAnnouncement = (data: AnnouncementQuery) => {
-  return http.request("post", "/announcement/export", { data });
+  return http.request("post", "/api/announcement/export", { data });
 };
 
 export const importAnnouncement = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
-  return http.request<AnnouncementResult>("post", "/announcement/import", {
+  return http.request<AnnouncementResult>("post", "/api/announcement/import", {
     data: formData,
     headers: {
       "Content-Type": "multipart/form-data"
