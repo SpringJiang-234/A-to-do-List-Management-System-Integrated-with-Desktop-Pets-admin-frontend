@@ -4,16 +4,15 @@ import { ref, onMounted, reactive } from "vue";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 
+/** 表格列配置 */
 export function useColumns() {
   const dataList = ref([]);
   const loading = ref(true);
-  const select = ref("yes");
   const columns: TableColumnList = [
     {
       type: "selection",
       align: "left",
-      reserveSelection: true,
-      hide: () => (select.value === "no" ? true : false)
+      reserveSelection: true
     },
     {
       label: "标题",
@@ -94,10 +93,7 @@ export function useColumns() {
     // background: rgba()
   });
 
-  function onChange(val) {
-    pagination.size = val;
-  }
-
+  /** 分页当前页改变时触发 */
   function onSizeChange(val) {
     console.log("onSizeChange", val);
   }
@@ -144,10 +140,8 @@ export function useColumns() {
     loading,
     columns,
     dataList,
-    select,
     pagination,
     loadingConfig,
-    onChange,
     onSizeChange,
     onCurrentChange
   };

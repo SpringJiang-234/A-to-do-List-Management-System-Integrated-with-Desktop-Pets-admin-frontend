@@ -10,6 +10,9 @@ import {
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 
+/**
+ * 搜索表单状态
+ */
 const state = ref<FieldValues>({
   title: "",
   content: "",
@@ -18,6 +21,9 @@ const state = ref<FieldValues>({
   updateTime: []
 });
 
+/**
+ * 搜索列
+ */
 const SearchColumns: PlusColumn[] = [
   {
     label: "标题",
@@ -77,28 +83,53 @@ const SearchColumns: PlusColumn[] = [
   }
 ];
 
+/**
+ * 搜索表单状态改变时触发
+ * @param values 搜索表单状态
+ */
 const handleChange = (values: any) => {
   console.log(values, "change");
 };
+
+/**
+ * 搜索表单提交时触发
+ * @param values 搜索表单状态
+ */
 const handleSearch = (values: any) => {
   console.log(values, "search");
 };
+
+/**
+ * 搜索表单重置时触发
+ */
 const handleRest = () => {
   console.log("handleRest");
 };
 
+/**
+ * 添加公告
+ */
 const handleAdd = () => {
   console.log("添加公告");
 };
 
+/**
+ * 批量删除公告
+ */
 const handleBatchDelete = () => {
   console.log("批量删除");
 };
 
+/**
+ * 导出 Excel
+ */
 const handleExport = () => {
   console.log("导出 Excel");
 };
 
+/**
+ * 导入 Excel
+ */
 const handleImport = () => {
   console.log("导入 Excel");
 };
@@ -115,6 +146,7 @@ const {
 </script>
 
 <template>
+  <!-- 公告管理搜索栏 -->
   <div class="announcement-container">
     <div>
       <PlusSearch
@@ -129,6 +161,7 @@ const {
       />
     </div>
 
+    <!-- 操作按钮 -->
     <TableActions
       :on-add="handleAdd"
       :on-import="handleImport"
@@ -136,6 +169,7 @@ const {
       :on-batch-delete="handleBatchDelete"
     />
 
+    <!-- 表格 -->
     <div>
       <pure-table
         border
