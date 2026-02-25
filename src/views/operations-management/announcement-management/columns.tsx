@@ -56,7 +56,7 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
         <>
           <el-button
             size="small"
-            type="info"
+            type="primary"
             onClick={() => handleDetail(index + 1, row)}
           >
             详情
