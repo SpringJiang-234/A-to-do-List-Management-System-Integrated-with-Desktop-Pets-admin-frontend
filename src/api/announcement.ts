@@ -20,8 +20,8 @@ export type AnnouncementQuery = {
   isTop?: string;
   createTime?: string[];
   updateTime?: string[];
-  current?: number;
-  size?: number;
+  pageNum?: number;
+  pageSize?: number;
 };
 
 export type AnnouncementVO = {

@@ -11,7 +11,11 @@ import {
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
-import { insertAnnouncement, type AnnouncementDTO } from "@/api/announcement";
+import {
+  insertAnnouncement,
+  type AnnouncementDTO,
+  type AnnouncementQuery
+} from "@/api/announcement";
 import { ElMessage } from "element-plus";
 
 /**
@@ -210,6 +214,7 @@ const {
   dataList,
   pagination,
   loadingConfig,
+  adaptiveConfig,
   onSizeChange,
   onCurrentChange
 } = useColumns();
@@ -240,21 +245,17 @@ const {
     />
 
     <!-- 表格 -->
-    <div>
+    <div class="table-wrapper">
       <pure-table
         border
+        adaptive
+        :adaptiveConfig="adaptiveConfig"
         row-key="id"
         alignWhole="center"
         showOverflowTooltip
         :loading="loading"
         :loading-config="loadingConfig"
-        :height="TABLE_HEIGHT"
-        :data="
-          dataList.slice(
-            (pagination.currentPage - 1) * pagination.pageSize,
-            pagination.currentPage * pagination.pageSize
-          )
-        "
+        :data="dataList"
         :columns="columns"
         :pagination="pagination"
         @page-size-change="onSizeChange"

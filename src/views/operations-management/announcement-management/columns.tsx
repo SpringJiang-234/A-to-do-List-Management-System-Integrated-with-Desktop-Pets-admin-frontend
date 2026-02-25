@@ -1,12 +1,19 @@
-import { tableData } from "./data";
-import { clone, delay } from "@pureadmin/utils";
-import { ref, onMounted, reactive } from "vue";
-import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
+import { ref, onMounted, reactive, type Ref } from "vue";
+import type {
+  PaginationProps,
+  LoadingConfig,
+  AdaptiveConfig
+} from "@pureadmin/table";
 import { message } from "@/utils/message";
+import {
+  getAnnouncementPage,
+  type AnnouncementQuery,
+  type AnnouncementVO
+} from "@/api/announcement";
 
 /** 表格列配置 */
-export function useColumns() {
-  const dataList = ref([]);
+export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
+  const dataList = ref<AnnouncementVO[]>([]);
   const loading = ref(true);
   const columns: TableColumnList = [
     {
@@ -93,31 +100,47 @@ export function useColumns() {
     // background: rgba()
   });
 
+  /** 撑满内容区自适应高度相关配置 */
+  const adaptiveConfig: AdaptiveConfig = {
+    offsetBottom: 110
+  };
+
   /** 分页当前页改变时触发 */
   function onSizeChange(val) {
-    console.log("onSizeChange", val);
+    pagination.pageSize = val;
+    fetchAnnouncementList();
   }
 
   function onCurrentChange(val) {
-    loadingConfig.text = `正在加载第${val}页...`;
+    pagination.currentPage = val;
+    fetchAnnouncementList();
+  }
+
+  /** 获取公告列表数据 */
+  async function fetchAnnouncementList() {
     loading.value = true;
-    delay(600).then(() => {
+    try {
+      const params: AnnouncementQuery = {
+        pageNum: pagination.currentPage,
+        pageSize: pagination.pageSize,
+        ...searchParams?.value
+      };
+      const result = await getAnnouncementPage(params);
+      if (result.code === 200) {
+        dataList.value = result.data.records;
+        pagination.total = result.data.total;
+      } else {
+        message(result.msg || "获取数据失败", { type: "error" });
+      }
+    } catch {
+      message("获取数据失败", { type: "error" });
+    } finally {
       loading.value = false;
-    });
+    }
   }
 
   onMounted(() => {
-    delay(600).then(() => {
-      const newList = [];
-      Array.from({ length: 6 }).forEach(() => {
-        newList.push(clone(tableData, true));
-      });
-      newList.flat(Infinity).forEach((item, index) => {
-        dataList.value.push({ id: index, ...item });
-      });
-      pagination.total = dataList.value.length;
-      loading.value = false;
-    });
+    fetchAnnouncementList();
   });
 
   const handleDetail = (index: number, row) => {
@@ -142,6 +165,7 @@ export function useColumns() {
     dataList,
     pagination,
     loadingConfig,
+    adaptiveConfig,
     onSizeChange,
     onCurrentChange
   };
