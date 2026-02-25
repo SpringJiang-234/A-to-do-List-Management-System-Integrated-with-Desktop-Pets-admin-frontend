@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
 import { ref } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import "plus-pro-components/es/components/dialog-form/style/css";
 import {
@@ -13,6 +14,7 @@ import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import {
   insertAnnouncement,
+  updateAnnouncement,
   exportAnnouncement,
   importAnnouncement,
   downloadTemplate,
@@ -20,7 +22,6 @@ import {
   type AnnouncementDTO,
   type AnnouncementQuery
 } from "@/api/announcement";
-import { ElMessage } from "element-plus";
 
 /**
  * 搜索表单状态
@@ -51,6 +52,13 @@ const dialogVisible = ref(false);
 const formData = ref<FieldValues>({});
 
 /**
+ * 编辑公告对话框状态
+ */
+const editDialogVisible = ref(false);
+const editFormData = ref<FieldValues>({});
+const editId = ref<number | null>(null);
+
+/**
  * 对话框表单列配置
  */
 const dialogColumns: PlusColumn[] = [
@@ -74,15 +82,18 @@ const dialogColumns: PlusColumn[] = [
   {
     label: "是否置顶",
     prop: "isTop",
-    valueType: "radio",
+    valueType: "select",
+    fieldProps: {
+      placeholder: "请选择是否置顶"
+    },
     options: [
-      {
-        label: "是",
-        value: "2"
-      },
       {
         label: "否",
         value: "1"
+      },
+      {
+        label: "是",
+        value: "2"
       }
     ]
   }
@@ -245,6 +256,42 @@ const handleSubmit = async () => {
 };
 
 /**
+ * 编辑公告
+ */
+const handleEdit = (row: any) => {
+  editId.value = row.id;
+  editFormData.value = {
+    title: row.title,
+    content: row.content,
+    isTop: row.isTop
+  };
+  editDialogVisible.value = true;
+};
+
+/**
+ * 提交编辑公告
+ */
+const handleEditSubmit = async () => {
+  try {
+    const data = {
+      ...editFormData.value,
+      id: editId.value,
+      isTop: editFormData.value.isTop === "2" ? 2 : 1
+    } as AnnouncementDTO;
+    const result = await updateAnnouncement(data);
+    if (result.code === 200) {
+      ElMessage.success(result.msg || "编辑成功");
+      editDialogVisible.value = false;
+      fetchAnnouncementList();
+    } else {
+      ElMessage.error(result.msg || "编辑失败");
+    }
+  } catch (error) {
+    ElMessage.error("编辑失败");
+  }
+};
+
+/**
  * 批量删除公告
  */
 const handleBatchDelete = async () => {
@@ -253,9 +300,20 @@ const handleBatchDelete = async () => {
     return;
   }
 
+  const count = multipleSelection.value.length;
   const ids = multipleSelection.value.map(row => row.id).join(",");
 
   try {
+    await ElMessageBox.confirm(
+      `确定要删除选中的 ${count} 条公告吗？`,
+      "批量删除确认",
+      {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }
+    );
+
     const result = await batchDeleteAnnouncement(ids);
     if (result.code === 200) {
       ElMessage.success("批量删除成功");
@@ -264,7 +322,9 @@ const handleBatchDelete = async () => {
       ElMessage.error(result.msg || "批量删除失败");
     }
   } catch (error) {
-    ElMessage.error("批量删除失败");
+    if (error !== "cancel") {
+      ElMessage.error("批量删除失败");
+    }
   }
 };
 
@@ -354,7 +414,7 @@ const {
   tableRef,
   multipleSelection,
   handleSelectionChange
-} = useColumns(searchParams);
+} = useColumns(searchParams, handleEdit);
 </script>
 
 <template>
@@ -409,6 +469,15 @@ const {
       :dialog="{ title: '新增公告' }"
       :form="{ columns: dialogColumns }"
       @confirm="handleSubmit"
+    />
+
+    <!-- 编辑公告对话框 -->
+    <PlusDialogForm
+      v-model:visible="editDialogVisible"
+      v-model="editFormData"
+      :dialog="{ title: '编辑公告' }"
+      :form="{ columns: dialogColumns }"
+      @confirm="handleEditSubmit"
     />
   </div>
 </template>

@@ -7,9 +7,10 @@ export type AnnouncementResult = {
 };
 
 export type AnnouncementDTO = {
+  id?: number;
   title?: string;
   content?: string;
-  isTop?: string;
+  isTop?: number;
   createTime?: string;
   updateTime?: string;
 };

@@ -1,8 +1,10 @@
 import { ref, onMounted, reactive, type Ref } from "vue";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
+import { ElMessageBox } from "element-plus";
 import {
   getAnnouncementPage,
+  deleteAnnouncement,
   type AnnouncementQuery,
   type AnnouncementVO
 } from "@/api/announcement";
@@ -11,7 +13,10 @@ import dayjs from "dayjs";
 const tableRef = ref();
 const multipleSelection = ref<AnnouncementVO[]>([]);
 
-export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
+export function useColumns(
+  searchParams?: Ref<AnnouncementQuery>,
+  onEdit?: (row: AnnouncementVO) => void
+) {
   const dataList = ref<AnnouncementVO[]>([]);
   const loading = ref(true);
   const columns: TableColumnList = [
@@ -154,14 +159,36 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     });
   };
 
-  const handleEdit = (index: number, row) => {
-    message(`您修改了第 ${index} 行，数据为：${JSON.stringify(row)}`, {
-      type: "success"
-    });
+  const handleEdit = (index: number, row: AnnouncementVO) => {
+    if (onEdit) {
+      onEdit(row);
+    }
   };
 
-  const handleDelete = (index: number, row) => {
-    message(`您删除了第 ${index} 行，数据为：${JSON.stringify(row)}`);
+  const handleDelete = async (index: number, row: AnnouncementVO) => {
+    try {
+      await ElMessageBox.confirm(
+        `确定要删除公告"${row.title}"吗？`,
+        "删除确认",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      );
+
+      const result = await deleteAnnouncement(row.id);
+      if (result.code === 200) {
+        message("删除成功", { type: "success" });
+        fetchAnnouncementList();
+      } else {
+        message(result.msg || "删除失败", { type: "error" });
+      }
+    } catch (error) {
+      if (error !== "cancel") {
+        message("删除失败", { type: "error" });
+      }
+    }
   };
 
   const handleSelectionChange = (val: AnnouncementVO[]) => {
