@@ -1,8 +1,8 @@
 import { http } from "@/utils/http";
 
 export type AnnouncementResult = {
-  success: boolean;
-  message: string;
+  code: number;
+  msg: string;
   data: any;
 };
 

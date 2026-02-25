@@ -172,11 +172,11 @@ const handleAdd = () => {
 const handleSubmit = async () => {
   try {
     const result = await insertAnnouncement(formData.value as AnnouncementDTO);
-    if (result.success) {
-      ElMessage.success(result.message || "新增成功");
+    if (result.code === 200) {
+      ElMessage.success(result.msg || "新增成功");
       dialogVisible.value = false;
     } else {
-      ElMessage.error(result.message || "新增失败");
+      ElMessage.error(result.msg || "新增失败");
     }
   } catch (error) {
     ElMessage.error("新增失败");
