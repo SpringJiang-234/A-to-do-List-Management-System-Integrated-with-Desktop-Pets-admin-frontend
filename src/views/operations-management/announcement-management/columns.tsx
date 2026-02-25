@@ -69,7 +69,7 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
 
   /** 分页配置 */
   const pagination = reactive<PaginationProps>({
-    pageSize: 10,
+    pageSize: 15,
     currentPage: 1,
     pageSizes: [10, 15, 20],
     total: 0,
@@ -120,7 +120,7 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
       const result = await getAnnouncementPage(params);
       if (result.code === 200) {
         dataList.value = result.data.records;
-        pagination.total = result.data.pages * result.data.pageSize;
+        pagination.total = result.data.total;
       } else {
         message(result.msg || "获取数据失败", { type: "error" });
       }
