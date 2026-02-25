@@ -30,6 +30,17 @@ const state = ref<FieldValues>({
 });
 
 /**
+ * 搜索参数
+ */
+const searchParams = ref<AnnouncementQuery>({
+  title: "",
+  content: "",
+  isTop: "",
+  createTime: undefined,
+  updateTime: undefined
+});
+
+/**
  * 新增公告对话框状态
  */
 const dialogVisible = ref(false);
@@ -149,6 +160,29 @@ const handleChange = (values: any) => {
  */
 const handleSearch = (values: any) => {
   console.log(values, "search");
+
+  searchParams.value = {
+    title: values.title || "",
+    content: values.content || "",
+    isTop: values.isTop || "",
+    createTime:
+      values.createTime?.[0] && values.createTime?.[1]
+        ? {
+            start: values.createTime[0],
+            end: values.createTime[1]
+          }
+        : undefined,
+    updateTime:
+      values.updateTime?.[0] && values.updateTime?.[1]
+        ? {
+            start: values.updateTime[0],
+            end: values.updateTime[1]
+          }
+        : undefined
+  };
+
+  pagination.currentPage = 1;
+  fetchAnnouncementList();
 };
 
 /**
@@ -156,6 +190,25 @@ const handleSearch = (values: any) => {
  */
 const handleRest = () => {
   console.log("handleRest");
+
+  state.value = {
+    title: "",
+    content: "",
+    isTop: "",
+    createTime: [],
+    updateTime: []
+  };
+
+  searchParams.value = {
+    title: "",
+    content: "",
+    isTop: "",
+    createTime: undefined,
+    updateTime: undefined
+  };
+
+  pagination.currentPage = 1;
+  fetchAnnouncementList();
 };
 
 /**
@@ -215,8 +268,9 @@ const {
   pagination,
   loadingConfig,
   onSizeChange,
-  onCurrentChange
-} = useColumns();
+  onCurrentChange,
+  fetchAnnouncementList
+} = useColumns(searchParams);
 </script>
 
 <template>

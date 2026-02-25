@@ -18,8 +18,14 @@ export type AnnouncementQuery = {
   title?: string;
   content?: string;
   isTop?: string;
-  createTime?: string[];
-  updateTime?: string[];
+  createTime?: {
+    start: string;
+    end: string;
+  };
+  updateTime?: {
+    start: string;
+    end: string;
+  };
   pageNum?: number;
   pageSize?: number;
 };

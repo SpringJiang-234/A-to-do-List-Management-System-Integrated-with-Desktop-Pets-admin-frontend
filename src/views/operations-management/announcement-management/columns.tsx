@@ -6,6 +6,7 @@ import {
   type AnnouncementQuery,
   type AnnouncementVO
 } from "@/api/announcement";
+import dayjs from "dayjs";
 
 /** 表格列配置 */
 export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
@@ -31,11 +32,21 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     },
     {
       label: "发布时间",
-      prop: "createTime"
+      prop: "createTime",
+      cellRenderer: ({ row }) => {
+        return row.createTime
+          ? dayjs(row.createTime).format("YYYY-MM-DD HH:mm:ss")
+          : "";
+      }
     },
     {
       label: "更新时间",
-      prop: "updateTime"
+      prop: "updateTime",
+      cellRenderer: ({ row }) => {
+        return row.updateTime
+          ? dayjs(row.updateTime).format("YYYY-MM-DD HH:mm:ss")
+          : "";
+      }
     },
     {
       label: "操作",
@@ -158,6 +169,7 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     pagination,
     loadingConfig,
     onSizeChange,
-    onCurrentChange
+    onCurrentChange,
+    fetchAnnouncementList
   };
 }
