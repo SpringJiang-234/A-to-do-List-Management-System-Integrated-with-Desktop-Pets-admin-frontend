@@ -8,7 +8,9 @@ import {
 } from "@/api/announcement";
 import dayjs from "dayjs";
 
-/** 表格列配置 */
+const tableRef = ref();
+const multipleSelection = ref<AnnouncementVO[]>([]);
+
 export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
   const dataList = ref<AnnouncementVO[]>([]);
   const loading = ref(true);
@@ -162,6 +164,10 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     message(`您删除了第 ${index} 行，数据为：${JSON.stringify(row)}`);
   };
 
+  const handleSelectionChange = (val: AnnouncementVO[]) => {
+    multipleSelection.value = val;
+  };
+
   return {
     loading,
     columns,
@@ -170,6 +176,9 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     loadingConfig,
     onSizeChange,
     onCurrentChange,
-    fetchAnnouncementList
+    fetchAnnouncementList,
+    tableRef,
+    multipleSelection,
+    handleSelectionChange
   };
 }

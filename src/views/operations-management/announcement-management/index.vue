@@ -16,6 +16,7 @@ import {
   exportAnnouncement,
   importAnnouncement,
   downloadTemplate,
+  batchDeleteAnnouncement,
   type AnnouncementDTO,
   type AnnouncementQuery
 } from "@/api/announcement";
@@ -246,8 +247,25 @@ const handleSubmit = async () => {
 /**
  * 批量删除公告
  */
-const handleBatchDelete = () => {
-  console.log("批量删除");
+const handleBatchDelete = async () => {
+  if (!multipleSelection.value || multipleSelection.value.length === 0) {
+    ElMessage.warning("请先选择要删除的数据");
+    return;
+  }
+
+  const ids = multipleSelection.value.map(row => row.id).join(",");
+
+  try {
+    const result = await batchDeleteAnnouncement(ids);
+    if (result.code === 200) {
+      ElMessage.success("批量删除成功");
+      fetchAnnouncementList();
+    } else {
+      ElMessage.error(result.msg || "批量删除失败");
+    }
+  } catch (error) {
+    ElMessage.error("批量删除失败");
+  }
 };
 
 /**
@@ -332,7 +350,10 @@ const {
   loadingConfig,
   onSizeChange,
   onCurrentChange,
-  fetchAnnouncementList
+  fetchAnnouncementList,
+  tableRef,
+  multipleSelection,
+  handleSelectionChange
 } = useColumns(searchParams);
 </script>
 
@@ -377,6 +398,7 @@ const {
         :pagination="pagination"
         @page-size-change="onSizeChange"
         @page-current-change="onCurrentChange"
+        @selection-change="handleSelectionChange"
       />
     </div>
 
