@@ -2,13 +2,17 @@
 import { useColumns } from "./columns";
 import { ref } from "vue";
 import "plus-pro-components/es/components/form/style/css";
+import "plus-pro-components/es/components/dialog-form/style/css";
 import {
   type PlusColumn,
   type FieldValues,
-  PlusSearch
+  PlusSearch,
+  PlusDialogForm
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
+import { insertAnnouncement, type AnnouncementDTO } from "@/api/announcement";
+import { ElMessage } from "element-plus";
 
 /**
  * 搜索表单状态
@@ -20,6 +24,50 @@ const state = ref<FieldValues>({
   createTime: [],
   updateTime: []
 });
+
+/**
+ * 新增公告对话框状态
+ */
+const dialogVisible = ref(false);
+const formData = ref<FieldValues>({});
+
+/**
+ * 对话框表单列配置
+ */
+const dialogColumns: PlusColumn[] = [
+  {
+    label: "标题",
+    prop: "title",
+    valueType: "copy",
+    fieldProps: {
+      placeholder: "请输入标题"
+    }
+  },
+  {
+    label: "内容",
+    prop: "content",
+    valueType: "textarea",
+    fieldProps: {
+      placeholder: "请输入内容",
+      rows: 4
+    }
+  },
+  {
+    label: "是否置顶",
+    prop: "isTop",
+    valueType: "radio",
+    options: [
+      {
+        label: "未置顶",
+        value: "1"
+      },
+      {
+        label: "已置顶",
+        value: "2"
+      }
+    ]
+  }
+];
 
 /**
  * 搜索列
@@ -107,10 +155,32 @@ const handleRest = () => {
 };
 
 /**
- * 添加公告
+ * 新增公告
  */
 const handleAdd = () => {
-  console.log("添加公告");
+  formData.value = {
+    title: "",
+    content: "",
+    isTop: "1"
+  };
+  dialogVisible.value = true;
+};
+
+/**
+ * 提交新增公告
+ */
+const handleSubmit = async () => {
+  try {
+    const result = await insertAnnouncement(formData.value as AnnouncementDTO);
+    if (result.success) {
+      ElMessage.success(result.message || "新增成功");
+      dialogVisible.value = false;
+    } else {
+      ElMessage.error(result.message || "新增失败");
+    }
+  } catch (error) {
+    ElMessage.error("新增失败");
+  }
 };
 
 /**
@@ -191,6 +261,15 @@ const {
         @page-current-change="onCurrentChange"
       />
     </div>
+
+    <!-- 新增公告对话框 -->
+    <PlusDialogForm
+      v-model:visible="dialogVisible"
+      v-model="formData"
+      :dialog="{ title: '新增公告' }"
+      :form="{ columns: dialogColumns }"
+      @confirm="handleSubmit"
+    />
   </div>
 </template>
 
