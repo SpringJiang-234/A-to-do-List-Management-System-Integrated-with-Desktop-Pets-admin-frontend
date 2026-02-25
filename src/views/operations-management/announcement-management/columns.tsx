@@ -28,7 +28,10 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     },
     {
       label: "是否置顶",
-      prop: "isTop"
+      prop: "isTop",
+      cellRenderer: ({ row }) => {
+        return row.isTop === "2" ? "是" : row.isTop === "1" ? "否" : "";
+      }
     },
     {
       label: "发布时间",

@@ -73,12 +73,12 @@ const dialogColumns: PlusColumn[] = [
     valueType: "radio",
     options: [
       {
-        label: "未置顶",
-        value: "1"
+        label: "是",
+        value: "2"
       },
       {
-        label: "已置顶",
-        value: "2"
+        label: "否",
+        value: "1"
       }
     ]
   }
@@ -113,12 +113,12 @@ const SearchColumns: PlusColumn[] = [
     },
     options: [
       {
-        label: "未置顶",
+        label: "否",
         value: "1",
         color: "blue"
       },
       {
-        label: "已置顶",
+        label: "是",
         value: "2",
         color: "red"
       }
