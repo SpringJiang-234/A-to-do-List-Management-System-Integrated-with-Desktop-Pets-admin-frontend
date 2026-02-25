@@ -15,6 +15,7 @@ import {
   insertAnnouncement,
   exportAnnouncement,
   importAnnouncement,
+  downloadTemplate,
   type AnnouncementDTO,
   type AnnouncementQuery
 } from "@/api/announcement";
@@ -303,6 +304,26 @@ const handleImport = () => {
   input.click();
 };
 
+/**
+ * 下载模板
+ */
+const handleDownloadTemplate = async () => {
+  try {
+    const blob = await downloadTemplate();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "公告导入模板.xlsx";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    ElMessage.success("模板下载成功");
+  } catch (error) {
+    ElMessage.error("模板下载失败");
+  }
+};
+
 const {
   loading,
   columns,
@@ -337,6 +358,7 @@ const {
       :on-import="handleImport"
       :on-export="handleExport"
       :on-batch-delete="handleBatchDelete"
+      :on-download-template="handleDownloadTemplate"
     />
 
     <!-- 表格 -->

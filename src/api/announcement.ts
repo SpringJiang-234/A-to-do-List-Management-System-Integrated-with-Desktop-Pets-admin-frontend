@@ -102,3 +102,9 @@ export const importAnnouncement = (file: File) => {
     }
   });
 };
+
+export const downloadTemplate = () => {
+  return http.request<Blob>("get", "/api/announcement/downloadTemplate", {
+    responseType: "blob"
+  });
+};
