@@ -214,7 +214,6 @@ const {
   dataList,
   pagination,
   loadingConfig,
-  adaptiveConfig,
   onSizeChange,
   onCurrentChange
 } = useColumns();
@@ -247,14 +246,14 @@ const {
     <!-- 表格 -->
     <div class="table-wrapper">
       <pure-table
+        ref="tableRef"
         border
-        adaptive
-        :adaptiveConfig="adaptiveConfig"
         row-key="id"
         alignWhole="center"
         showOverflowTooltip
         :loading="loading"
         :loading-config="loadingConfig"
+        :height="TABLE_HEIGHT"
         :data="dataList"
         :columns="columns"
         :pagination="pagination"

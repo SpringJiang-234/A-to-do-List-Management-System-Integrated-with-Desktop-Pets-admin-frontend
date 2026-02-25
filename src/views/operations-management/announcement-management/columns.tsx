@@ -1,9 +1,5 @@
 import { ref, onMounted, reactive, type Ref } from "vue";
-import type {
-  PaginationProps,
-  LoadingConfig,
-  AdaptiveConfig
-} from "@pureadmin/table";
+import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import {
   getAnnouncementPage,
@@ -79,7 +75,8 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     total: 0,
     align: "right",
     background: true,
-    size: "default"
+    size: "default",
+    hideOnSinglePage: false
   });
 
   /** 加载动画配置 */
@@ -99,11 +96,6 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     // svg: "",
     // background: rgba()
   });
-
-  /** 撑满内容区自适应高度相关配置 */
-  const adaptiveConfig: AdaptiveConfig = {
-    offsetBottom: 110
-  };
 
   /** 分页当前页改变时触发 */
   function onSizeChange(val) {
@@ -128,7 +120,7 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
       const result = await getAnnouncementPage(params);
       if (result.code === 200) {
         dataList.value = result.data.records;
-        pagination.total = result.data.total;
+        pagination.total = result.data.pages * result.data.pageSize;
       } else {
         message(result.msg || "获取数据失败", { type: "error" });
       }
@@ -165,7 +157,6 @@ export function useColumns(searchParams?: Ref<AnnouncementQuery>) {
     dataList,
     pagination,
     loadingConfig,
-    adaptiveConfig,
     onSizeChange,
     onCurrentChange
   };
