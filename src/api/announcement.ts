@@ -86,7 +86,10 @@ export const getAnnouncementDetails = (id: number) => {
 };
 
 export const exportAnnouncement = (data: AnnouncementQuery) => {
-  return http.request("post", "/api/announcement/export", { data });
+  return http.request<Blob>("post", "/api/announcement/export", {
+    data,
+    responseType: "blob"
+  });
 };
 
 export const importAnnouncement = (file: File) => {

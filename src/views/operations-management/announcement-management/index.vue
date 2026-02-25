@@ -13,6 +13,8 @@ import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import {
   insertAnnouncement,
+  exportAnnouncement,
+  importAnnouncement,
   type AnnouncementDTO,
   type AnnouncementQuery
 } from "@/api/announcement";
@@ -250,15 +252,55 @@ const handleBatchDelete = () => {
 /**
  * 导出 Excel
  */
-const handleExport = () => {
-  console.log("导出 Excel");
+const handleExport = async () => {
+  try {
+    const exportParams = {
+      title: searchParams.value.title,
+      content: searchParams.value.content,
+      isTop: searchParams.value.isTop,
+      createTime: searchParams.value.createTime,
+      updateTime: searchParams.value.updateTime
+    };
+    const blob = await exportAnnouncement(exportParams);
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `公告数据_${new Date().getTime()}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    ElMessage.success("导出成功");
+  } catch (error) {
+    ElMessage.error("导出失败");
+  }
 };
 
 /**
  * 导入 Excel
  */
 const handleImport = () => {
-  console.log("导入 Excel");
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".xlsx,.xls";
+  input.onchange = async (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    const file = target.files?.[0];
+    if (file) {
+      try {
+        const result = await importAnnouncement(file);
+        if (result.code === 200) {
+          ElMessage.success(result.msg || "导入成功");
+          fetchAnnouncementList();
+        } else {
+          ElMessage.error(result.msg || "导入失败");
+        }
+      } catch (error) {
+        ElMessage.error("导入失败");
+      }
+    }
+  };
+  input.click();
 };
 
 const {
