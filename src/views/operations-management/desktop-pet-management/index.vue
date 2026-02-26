@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { ref, onActivated } from "vue";
+import { ref, onActivated, onDeactivated } from "vue";
 import { ElMessage } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import {
@@ -215,6 +215,10 @@ const {
 onActivated(() => {
   console.log("桌宠管理 - onActivated 触发");
   fetchDesktopPetList();
+});
+
+onDeactivated(() => {
+  console.log("桌宠管理 - onDeactivated 触发");
 });
 </script>
 

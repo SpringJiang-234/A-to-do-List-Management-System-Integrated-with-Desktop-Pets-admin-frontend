@@ -120,6 +120,8 @@ const whiteList = ["/login"];
 const { VITE_HIDE_HOME } = import.meta.env;
 
 router.beforeEach((to: ToRouteType, _from, next) => {
+  console.log("路由守卫 - 从", _from.name, "跳转到", to.name);
+
   to.meta.loaded = loadedPaths.has(to.path);
 
   if (!to.meta.loaded) {
@@ -127,9 +129,11 @@ router.beforeEach((to: ToRouteType, _from, next) => {
   }
 
   if (to.meta?.keepAlive) {
+    console.log("路由守卫 - keepAlive 缓存操作，添加:", to.name);
     handleAliveRoute(to, "add");
     // 页面整体刷新和点击标签页刷新
     if (_from.name === undefined || _from.name === "Redirect") {
+      console.log("路由守卫 - 刷新缓存:", to.name);
       handleAliveRoute(to);
     }
   }

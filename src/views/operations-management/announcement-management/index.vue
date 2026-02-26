@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { ref, onActivated } from "vue";
+import { ref, onActivated, onDeactivated } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import "plus-pro-components/es/components/dialog-form/style/css";
@@ -425,6 +425,10 @@ const {
 onActivated(() => {
   console.log("公告管理 - onActivated 触发");
   fetchAnnouncementList();
+});
+
+onDeactivated(() => {
+  console.log("公告管理 - onDeactivated 触发");
 });
 </script>
 
