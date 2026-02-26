@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { ref, onActivated, onDeactivated } from "vue";
+import { ref, onActivated, onDeactivated, watch } from "vue";
 import { ElMessage } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import {
@@ -12,10 +12,13 @@ import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import { exportDesktopPet, type DesktopPetQuery } from "@/api/desktop-pet";
 import { usePermissionStoreHook } from "@/store/modules/permission";
+import { useRoute } from "vue-router";
 
 defineOptions({
   name: "DesktopPetManagement"
 });
+
+const route = useRoute();
 
 console.log("桌宠管理 - 组件 setup 开始执行");
 console.log("桌宠管理 - 组件挂载");
@@ -228,6 +231,15 @@ onActivated(() => {
 onDeactivated(() => {
   console.log("桌宠管理 - onDeactivated 触发");
 });
+
+// 监听路由变化，确保页面切换时刷新数据
+watch(
+  () => route.path,
+  () => {
+    console.log("桌宠管理 - 路由变化，触发数据刷新");
+    fetchDesktopPetList();
+  }
+);
 </script>
 
 <template>

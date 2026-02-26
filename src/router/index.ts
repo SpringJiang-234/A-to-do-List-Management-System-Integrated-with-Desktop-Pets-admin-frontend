@@ -135,10 +135,6 @@ router.beforeEach((to: ToRouteType, _from, next) => {
     console.log("路由守卫 - keepAlive 缓存操作，添加:", to.name);
     handleAliveRoute(to, "add");
   }
-  if (_from.meta?.keepAlive) {
-    console.log("路由守卫 - keepAlive 缓存操作，添加:", _from.name);
-    handleAliveRoute(_from, "add");
-  }
   // 页面整体刷新和点击标签页刷新
   if (_from.name === undefined || _from.name === "Redirect") {
     if (to.meta?.keepAlive) {

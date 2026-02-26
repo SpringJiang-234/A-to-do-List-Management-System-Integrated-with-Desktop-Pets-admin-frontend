@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { ref, onActivated, onDeactivated } from "vue";
+import { ref, onActivated, onDeactivated, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import "plus-pro-components/es/components/dialog-form/style/css";
@@ -22,10 +22,13 @@ import {
   type AnnouncementDTO,
   type AnnouncementQuery
 } from "@/api/announcement";
+import { useRoute } from "vue-router";
 
 defineOptions({
   name: "AnnouncementManagement"
 });
+
+const route = useRoute();
 
 console.log("公告管理 - 组件 setup 开始执行");
 
@@ -430,6 +433,15 @@ onActivated(() => {
 onDeactivated(() => {
   console.log("公告管理 - onDeactivated 触发");
 });
+
+// 监听路由变化，确保页面切换时刷新数据
+watch(
+  () => route.path,
+  () => {
+    console.log("公告管理 - 路由变化，触发数据刷新");
+    fetchAnnouncementList();
+  }
+);
 </script>
 
 <template>

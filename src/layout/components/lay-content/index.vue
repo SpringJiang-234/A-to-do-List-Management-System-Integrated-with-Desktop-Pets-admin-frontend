@@ -4,8 +4,10 @@ import LayFooter from "../lay-footer/index.vue";
 import { useTags } from "@/layout/hooks/useTag";
 import { useGlobal, isNumber } from "@pureadmin/utils";
 import BackTopIcon from "@/assets/svg/back_top.svg?component";
-import { h, computed, Transition, defineComponent } from "vue";
+import { h, computed, Transition, defineComponent, ref } from "vue";
 import { usePermissionStoreHook } from "@/store/modules/permission";
+
+const permissionStore = usePermissionStoreHook();
 
 const props = defineProps({
   fixedHeader: Boolean
@@ -140,11 +142,10 @@ const transitionMain = defineComponent({
                 <transitionMain :route="route">
                   <keep-alive
                     v-if="isKeepAlive"
-                    :include="usePermissionStoreHook().cachePageList"
+                    :include="permissionStore.cachePageList"
                   >
                     <component
                       :is="Comp"
-                      :key="route.name"
                       :frameInfo="frameInfo"
                       class="main-content"
                     />
@@ -164,11 +165,10 @@ const transitionMain = defineComponent({
               <transitionMain :route="route">
                 <keep-alive
                   v-if="isKeepAlive"
-                  :include="usePermissionStoreHook().cachePageList"
+                  :include="permissionStore.cachePageList"
                 >
                   <component
                     :is="Comp"
-                    :key="route.name"
                     :frameInfo="frameInfo"
                     class="main-content"
                   />
