@@ -111,3 +111,9 @@ export const importFeedback = (file: File) => {
     }
   });
 };
+
+export const downloadTemplate = () => {
+  return http.request<Blob>("get", "/api/feedback/downloadTemplate", {
+    responseType: "blob"
+  });
+};
