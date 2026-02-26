@@ -40,6 +40,15 @@ export type AnnouncementVO = {
   updateTime: string;
 };
 
+export type AnnouncementDetails = {
+  id: number;
+  title: string;
+  content: string;
+  isTop: string;
+  createTime: string;
+  updateTime: string;
+};
+
 export type PageResult<T> = {
   records: T[];
   total: number;

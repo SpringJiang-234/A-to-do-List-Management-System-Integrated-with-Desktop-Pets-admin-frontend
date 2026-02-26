@@ -19,6 +19,18 @@ export default {
       }
     },
     {
+      path: "/operations-management/announcement-detail/:id",
+      name: "AnnouncementDetail",
+      component: () =>
+        import(
+          "@/views/operations-management/announcement-management/detail.vue"
+        ),
+      meta: {
+        title: "公告详情",
+        showLink: false
+      }
+    },
+    {
       path: "/operations-management/feedback-management",
       name: "FeedbackManagement",
       component: () =>
