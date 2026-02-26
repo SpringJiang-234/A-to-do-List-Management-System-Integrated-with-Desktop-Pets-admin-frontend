@@ -12,7 +12,14 @@ import {
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
-import {} from "@/api/user";
+import {
+  insertUser,
+  batchDeleteUser,
+  exportUser,
+  importUser,
+  type UserDTO,
+  type UserQuery
+} from "@/api/user";
 import { useRoute } from "vue-router";
 
 defineOptions({
@@ -339,9 +346,46 @@ const handleRest = () => {
  * 新增用户
  */
 const handleAdd = () => {
-  // 这里需要根据路由配置来实现新增功能
-  // 暂时使用alert提示
-  alert("新增用户功能需要配置路由");
+  formData.value = {
+    account: "",
+    passwordHash: "",
+    nickname: "",
+    avatar: "",
+    gender: "3",
+    birth: undefined,
+    status: "1",
+    type: "2"
+  };
+  dialogVisible.value = true;
+};
+
+/**
+ * 提交新增用户
+ */
+const handleSubmit = async () => {
+  try {
+    const formValue = formData.value;
+    const userData: UserDTO = {
+      account: formValue.account as string,
+      passwordHash: formValue.passwordHash as string,
+      nickname: formValue.nickname as string,
+      avatar: formValue.avatar as string,
+      gender: formValue.gender ? Number(formValue.gender) : 3,
+      birth: formValue.birth as string,
+      status: formValue.status ? Number(formValue.status) : 1,
+      type: formValue.type ? Number(formValue.type) : 2
+    };
+    const result = await insertUser(userData);
+    if (result.code === 200) {
+      ElMessage.success(result.msg || "添加成功");
+      dialogVisible.value = false;
+      fetchUserList();
+    } else {
+      ElMessage.error(result.msg || "添加失败");
+    }
+  } catch (error) {
+    ElMessage.error("添加失败");
+  }
 };
 
 /**
@@ -534,6 +578,15 @@ onMounted(() => {
         @selection-change="handleSelectionChange"
       />
     </div>
+
+    <!-- 新增用户对话框 -->
+    <PlusDialogForm
+      v-model:visible="dialogVisible"
+      v-model="formData"
+      :dialog="{ title: '新增用户' }"
+      :form="{ columns: dialogColumns }"
+      @confirm="handleSubmit"
+    />
   </div>
 </template>
 
