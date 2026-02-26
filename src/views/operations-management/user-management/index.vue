@@ -14,6 +14,7 @@ import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import {
   insertUser,
+  updateUser,
   batchDeleteUser,
   exportUser,
   importUser,
@@ -393,9 +394,48 @@ const handleSubmit = async () => {
  * 编辑用户
  */
 const handleEdit = (row: any) => {
-  // 这里需要根据路由配置来实现编辑功能
-  // 暂时使用alert提示
-  alert("编辑用户功能需要配置路由");
+  editId.value = row.id;
+  editFormData.value = {
+    account: row.account,
+    passwordHash: row.passwordHash,
+    nickname: row.nickname,
+    avatar: row.avatar,
+    gender: row.gender,
+    birth: row.birth,
+    status: row.status,
+    type: row.type
+  };
+  editDialogVisible.value = true;
+};
+
+/**
+ * 提交编辑用户
+ */
+const handleEditSubmit = async () => {
+  try {
+    const formValue = editFormData.value;
+    const userData: UserDTO = {
+      id: editId.value,
+      account: formValue.account as string,
+      passwordHash: formValue.passwordHash as string,
+      nickname: formValue.nickname as string,
+      avatar: formValue.avatar as string,
+      gender: formValue.gender ? Number(formValue.gender) : 3,
+      birth: formValue.birth as string,
+      status: formValue.status ? Number(formValue.status) : 1,
+      type: formValue.type ? Number(formValue.type) : 2
+    };
+    const result = await updateUser(userData);
+    if (result.code === 200) {
+      ElMessage.success(result.msg || "修改成功");
+      editDialogVisible.value = false;
+      fetchUserList();
+    } else {
+      ElMessage.error(result.msg || "修改失败");
+    }
+  } catch (error) {
+    ElMessage.error("修改失败");
+  }
 };
 
 /**
@@ -608,6 +648,15 @@ onMounted(() => {
       :dialog="{ title: '新增用户' }"
       :form="{ columns: dialogColumns }"
       @confirm="handleSubmit"
+    />
+
+    <!-- 编辑用户对话框 -->
+    <PlusDialogForm
+      v-model:visible="editDialogVisible"
+      v-model="editFormData"
+      :dialog="{ title: '编辑用户' }"
+      :form="{ columns: dialogColumns }"
+      @confirm="handleEditSubmit"
     />
   </div>
 </template>
