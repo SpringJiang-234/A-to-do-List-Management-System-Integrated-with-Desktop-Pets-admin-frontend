@@ -41,6 +41,16 @@ export default {
       }
     },
     {
+      path: "/operations-management/feedback-detail/:id",
+      name: "FeedbackDetail",
+      component: () =>
+        import("@/views/operations-management/feedback-management/detail.vue"),
+      meta: {
+        title: "反馈详情",
+        showLink: false
+      }
+    },
+    {
       path: "/operations-management/user-management",
       name: "UserManagement",
       component: () =>
