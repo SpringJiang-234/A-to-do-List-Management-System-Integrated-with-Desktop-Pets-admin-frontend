@@ -456,6 +456,11 @@ const {
         :data="dataList"
         :columns="columns"
         :pagination="pagination"
+        :header-cell-style="{
+          backgroundColor: '#e8e8e8',
+          color: '#303133',
+          fontWeight: '600'
+        }"
         @page-size-change="onSizeChange"
         @page-current-change="onCurrentChange"
         @selection-change="handleSelectionChange"

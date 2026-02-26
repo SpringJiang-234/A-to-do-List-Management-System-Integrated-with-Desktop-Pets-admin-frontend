@@ -58,6 +58,18 @@ export default {
       meta: {
         title: "桌宠管理"
       }
+    },
+    {
+      path: "/operations-management/desktop-pet-detail/:id",
+      name: "DesktopPetDetail",
+      component: () =>
+        import(
+          "@/views/operations-management/desktop-pet-management/detail.vue"
+        ),
+      meta: {
+        title: "桌宠详情",
+        showLink: false
+      }
     }
   ]
 } satisfies RouteConfigsTable;
