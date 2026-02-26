@@ -54,7 +54,9 @@ export const usePermissionStore = defineStore("pure-permission", {
           this.clearCache();
           break;
         case "add":
-          this.cachePageList.push(name);
+          if (delIndex === -1) {
+            this.cachePageList.push(name);
+          }
           break;
         case "delete":
           delIndex !== -1 && this.cachePageList.splice(delIndex, 1);

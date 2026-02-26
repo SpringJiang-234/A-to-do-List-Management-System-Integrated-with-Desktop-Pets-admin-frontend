@@ -144,7 +144,7 @@ const transitionMain = defineComponent({
                   >
                     <component
                       :is="Comp"
-                      :key="fullPath"
+                      :key="route.name"
                       :frameInfo="frameInfo"
                       class="main-content"
                     />
@@ -168,7 +168,7 @@ const transitionMain = defineComponent({
                 >
                   <component
                     :is="Comp"
-                    :key="fullPath"
+                    :key="route.name"
                     :frameInfo="frameInfo"
                     class="main-content"
                   />

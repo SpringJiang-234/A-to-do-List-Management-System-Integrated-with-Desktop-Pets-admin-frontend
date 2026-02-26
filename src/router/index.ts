@@ -120,7 +120,10 @@ const whiteList = ["/login"];
 const { VITE_HIDE_HOME } = import.meta.env;
 
 router.beforeEach((to: ToRouteType, _from, next) => {
+  console.log("路由守卫 - 开始执行");
   console.log("路由守卫 - 从", _from.name, "跳转到", to.name);
+  console.log("路由守卫 - to.meta.keepAlive:", to.meta?.keepAlive);
+  console.log("路由守卫 - _from.meta.keepAlive:", _from.meta?.keepAlive);
 
   to.meta.loaded = loadedPaths.has(to.path);
 
@@ -131,12 +134,22 @@ router.beforeEach((to: ToRouteType, _from, next) => {
   if (to.meta?.keepAlive) {
     console.log("路由守卫 - keepAlive 缓存操作，添加:", to.name);
     handleAliveRoute(to, "add");
-    // 页面整体刷新和点击标签页刷新
-    if (_from.name === undefined || _from.name === "Redirect") {
+  }
+  if (_from.meta?.keepAlive) {
+    console.log("路由守卫 - keepAlive 缓存操作，添加:", _from.name);
+    handleAliveRoute(_from, "add");
+  }
+  // 页面整体刷新和点击标签页刷新
+  if (_from.name === undefined || _from.name === "Redirect") {
+    if (to.meta?.keepAlive) {
       console.log("路由守卫 - 刷新缓存:", to.name);
       handleAliveRoute(to);
     }
   }
+  console.log(
+    "路由守卫 - 缓存页面列表:",
+    usePermissionStoreHook().cachePageList
+  );
   const userInfo = storageLocal().getItem<DataInfo<number>>(userKey);
   const externalLink = isUrl(to?.name as string);
   if (!externalLink) {
@@ -220,6 +233,7 @@ router.beforeEach((to: ToRouteType, _from, next) => {
       next();
     }
   }
+  console.log("路由守卫 - 执行完成");
 });
 
 router.afterEach(to => {

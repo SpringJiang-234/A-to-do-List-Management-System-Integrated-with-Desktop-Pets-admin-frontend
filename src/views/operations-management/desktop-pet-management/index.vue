@@ -11,12 +11,14 @@ import {
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import { exportDesktopPet, type DesktopPetQuery } from "@/api/desktop-pet";
+import { usePermissionStoreHook } from "@/store/modules/permission";
 
 defineOptions({
   name: "DesktopPetManagement"
 });
 
 console.log("桌宠管理 - 组件 setup 开始执行");
+console.log("桌宠管理 - 组件挂载");
 
 /**
  * 搜索表单状态
@@ -214,6 +216,12 @@ const {
 
 onActivated(() => {
   console.log("桌宠管理 - onActivated 触发");
+  const cachePageList = usePermissionStoreHook().cachePageList;
+  console.log("桌宠管理 - cachePageList:", cachePageList);
+  console.log(
+    "桌宠管理 - is in cache:",
+    cachePageList.includes("DesktopPetManagement")
+  );
   fetchDesktopPetList();
 });
 
