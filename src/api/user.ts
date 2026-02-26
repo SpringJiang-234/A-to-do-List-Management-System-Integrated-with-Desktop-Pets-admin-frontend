@@ -137,3 +137,9 @@ export const importUser = (file: File) => {
     }
   });
 };
+
+export const downloadTemplate = () => {
+  return http.request<Blob>("get", "/api/user/downloadTemplate", {
+    responseType: "blob"
+  });
+};
