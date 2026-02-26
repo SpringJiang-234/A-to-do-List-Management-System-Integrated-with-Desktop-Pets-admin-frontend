@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { ref } from "vue";
+import { ref, onActivated } from "vue";
 import { ElMessage } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import {
@@ -11,6 +11,12 @@ import {
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import { exportDesktopPet, type DesktopPetQuery } from "@/api/desktop-pet";
+
+defineOptions({
+  name: "DesktopPetManagement"
+});
+
+console.log("桌宠管理 - 组件 setup 开始执行");
 
 /**
  * 搜索表单状态
@@ -205,6 +211,11 @@ const {
   multipleSelection,
   handleSelectionChange
 } = useColumns(searchParams);
+
+onActivated(() => {
+  console.log("桌宠管理 - onActivated 触发");
+  fetchDesktopPetList();
+});
 </script>
 
 <template>

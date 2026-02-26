@@ -1,4 +1,4 @@
-import { ref, onMounted, reactive, type Ref } from "vue";
+import { ref, reactive, type Ref } from "vue";
 import { useDetail } from "./useDetail";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
@@ -110,6 +110,7 @@ export function useColumns(
 
   /** 获取桌宠列表数据 */
   async function fetchDesktopPetList() {
+    console.log("桌宠管理 - fetchDesktopPetList 开始执行");
     loading.value = true;
     try {
       const params: DesktopPetQuery = {
@@ -121,6 +122,7 @@ export function useColumns(
       if (result.code === 200) {
         dataList.value = result.data.records;
         pagination.total = result.data.total;
+        console.log("桌宠管理 - 数据加载成功，共", result.data.total, "条记录");
       } else {
         message(result.msg || "获取数据失败", { type: "error" });
       }
@@ -130,10 +132,6 @@ export function useColumns(
       loading.value = false;
     }
   }
-
-  onMounted(() => {
-    fetchDesktopPetList();
-  });
 
   const handleDetail = (index: number, row: DesktopPetVO) => {
     if (onDetail) {

@@ -15,7 +15,8 @@ export default {
           "@/views/operations-management/announcement-management/index.vue"
         ),
       meta: {
-        title: "公告管理"
+        title: "公告管理",
+        keepAlive: true
       }
     },
     {
@@ -56,7 +57,8 @@ export default {
           "@/views/operations-management/desktop-pet-management/index.vue"
         ),
       meta: {
-        title: "桌宠管理"
+        title: "桌宠管理",
+        keepAlive: true
       }
     },
     {

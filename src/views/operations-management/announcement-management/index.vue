@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useColumns } from "./columns";
-import { ref } from "vue";
+import { ref, onActivated } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import "plus-pro-components/es/components/dialog-form/style/css";
@@ -22,6 +22,12 @@ import {
   type AnnouncementDTO,
   type AnnouncementQuery
 } from "@/api/announcement";
+
+defineOptions({
+  name: "AnnouncementManagement"
+});
+
+console.log("公告管理 - 组件 setup 开始执行");
 
 /**
  * 搜索表单状态
@@ -415,6 +421,11 @@ const {
   multipleSelection,
   handleSelectionChange
 } = useColumns(searchParams, handleEdit);
+
+onActivated(() => {
+  console.log("公告管理 - onActivated 触发");
+  fetchAnnouncementList();
+});
 </script>
 
 <template>

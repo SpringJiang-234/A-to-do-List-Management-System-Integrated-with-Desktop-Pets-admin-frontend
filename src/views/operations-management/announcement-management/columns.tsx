@@ -1,4 +1,4 @@
-import { ref, onMounted, reactive, type Ref } from "vue";
+import { ref, reactive, type Ref } from "vue";
 import { useDetail } from "./useDetail";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
@@ -131,6 +131,7 @@ export function useColumns(
 
   /** 获取公告列表数据 */
   async function fetchAnnouncementList() {
+    console.log("公告管理 - fetchAnnouncementList 开始执行");
     loading.value = true;
     try {
       const params: AnnouncementQuery = {
@@ -142,6 +143,7 @@ export function useColumns(
       if (result.code === 200) {
         dataList.value = result.data.records;
         pagination.total = result.data.total;
+        console.log("公告管理 - 数据加载成功，共", result.data.total, "条记录");
       } else {
         message(result.msg || "获取数据失败", { type: "error" });
       }
@@ -151,10 +153,6 @@ export function useColumns(
       loading.value = false;
     }
   }
-
-  onMounted(() => {
-    fetchAnnouncementList();
-  });
 
   const handleDetail = (index: number, row: AnnouncementVO) => {
     if (onDetail) {
