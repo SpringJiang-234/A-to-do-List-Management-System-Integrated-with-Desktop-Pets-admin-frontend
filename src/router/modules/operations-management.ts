@@ -22,10 +22,6 @@ export default {
     {
       path: "/operations-management/announcement-detail/:id",
       name: "AnnouncementDetail",
-      component: () =>
-        import(
-          "@/views/operations-management/announcement-management/detail.vue"
-        ),
       meta: {
         title: "公告详情",
         showLink: false
@@ -43,8 +39,6 @@ export default {
     {
       path: "/operations-management/feedback-detail/:id",
       name: "FeedbackDetail",
-      component: () =>
-        import("@/views/operations-management/feedback-management/detail.vue"),
       meta: {
         title: "反馈详情",
         showLink: false
