@@ -37,8 +37,8 @@ dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
 const ruleForm = reactive({
-  username: "admin",
-  password: "admin123"
+  account: "winxp",
+  password: "123456abc"
 });
 
 const onLogin = async (formEl: FormInstance | undefined) => {
@@ -48,11 +48,11 @@ const onLogin = async (formEl: FormInstance | undefined) => {
       loading.value = true;
       useUserStoreHook()
         .loginByUsername({
-          username: ruleForm.username,
+          account: ruleForm.account,
           password: ruleForm.password
         })
         .then(res => {
-          if (res.success) {
+          if (res.code === 200) {
             // 获取后端路由
             return initRouter().then(() => {
               disabled.value = true;
@@ -127,10 +127,10 @@ useEventListener(document, "keydown", ({ code }) => {
                     trigger: 'blur'
                   }
                 ]"
-                prop="username"
+                prop="account"
               >
                 <el-input
-                  v-model="ruleForm.username"
+                  v-model="ruleForm.account"
                   clearable
                   placeholder="账号"
                   :prefix-icon="useRenderIcon(User)"

@@ -68,7 +68,19 @@ export const useUserStore = defineStore("pure-user", {
       return new Promise<UserResult>((resolve, reject) => {
         getLogin(data)
           .then(data => {
-            if (data?.success) setToken(data.data);
+            if (data?.code === 200) {
+              // 适配后端返回的格式
+              const tokenData = {
+                accessToken: data.data.token,
+                expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 假设token有效期为1天
+                refreshToken: data.data.token,
+                username: data.data.username,
+                nickname: data.data.username,
+                roles: data.data.role ? [data.data.role] : [],
+                permissions: []
+              };
+              setToken(tokenData);
+            }
             resolve(data);
           })
           .catch(error => {
@@ -92,7 +104,12 @@ export const useUserStore = defineStore("pure-user", {
         refreshTokenApi(data)
           .then(data => {
             if (data) {
-              setToken(data.data);
+              // 适配后端返回的格式，将expires从string转换为Date
+              const tokenData = {
+                ...data.data,
+                expires: new Date(data.data.expires)
+              };
+              setToken(tokenData);
               resolve(data);
             }
           })

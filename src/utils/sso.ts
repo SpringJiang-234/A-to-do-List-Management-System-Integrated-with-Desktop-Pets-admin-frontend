@@ -37,7 +37,14 @@ import { subBefore, getQueryMap } from "@pureadmin/utils";
     removeToken();
 
     // 保存新信息到本地
-    setToken(params);
+    // 将expires从string转换为Date（如果存在）
+    const tokenData = {
+      ...params,
+      expires: params.expires
+        ? new Date(params.expires)
+        : new Date(Date.now() + 24 * 60 * 60 * 1000)
+    };
+    setToken(tokenData);
 
     // 删除不需要显示在 url 的参数
     delete params.roles;
