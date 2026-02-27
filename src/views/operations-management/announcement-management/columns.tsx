@@ -1,5 +1,4 @@
 import { ref, reactive, type Ref } from "vue";
-import { useDetail } from "./useDetail";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
@@ -16,11 +15,10 @@ const multipleSelection = ref<AnnouncementVO[]>([]);
 
 export function useColumns(
   searchParams?: Ref<AnnouncementQuery>,
-  onEdit?: (row: AnnouncementVO) => void,
-  onDetail?: (row: AnnouncementVO) => void
+  onEdit?: (row: AnnouncementVO) => void
+  // _onDetail?: (row: AnnouncementVO) => void
 ) {
   const dataList = ref<AnnouncementVO[]>([]);
-  const { toDetail } = useDetail();
   const loading = ref(true);
   const columns: TableColumnList = [
     {
@@ -62,13 +60,6 @@ export function useColumns(
       label: "操作",
       cellRenderer: ({ index, row }) => (
         <>
-          <el-button
-            size="small"
-            type="primary"
-            onClick={() => handleDetail(index + 1, row)}
-          >
-            详情
-          </el-button>
           <el-button
             size="small"
             type="warning"
@@ -153,16 +144,6 @@ export function useColumns(
       loading.value = false;
     }
   }
-
-  const handleDetail = (index: number, row: AnnouncementVO) => {
-    if (onDetail) {
-      onDetail(row);
-    } else {
-      const id = row.id.toString();
-      const title = row.title || "公告详情";
-      toDetail({ id }, title);
-    }
-  };
 
   const handleEdit = (index: number, row: AnnouncementVO) => {
     if (onEdit) {

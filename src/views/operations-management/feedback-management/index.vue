@@ -138,30 +138,6 @@ const dialogColumns: PlusColumn[] = [
  */
 const SearchColumns: PlusColumn[] = [
   {
-    label: "用户ID",
-    prop: "userId",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入用户ID"
-    }
-  },
-  {
-    label: "反馈标题",
-    prop: "title",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入标题"
-    }
-  },
-  {
-    label: "反馈内容",
-    prop: "content",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入内容"
-    }
-  },
-  {
     label: "处理状态",
     prop: "status",
     valueType: "select",
@@ -187,14 +163,6 @@ const SearchColumns: PlusColumn[] = [
     ]
   },
   {
-    label: "回复内容",
-    prop: "replyContent",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入回复内容"
-    }
-  },
-  {
     label: "创建时间",
     prop: "createTime",
     valueType: "date-picker",
@@ -212,6 +180,38 @@ const SearchColumns: PlusColumn[] = [
       type: "datetimerange",
       startPlaceholder: "请选择",
       endPlaceholder: "请选择"
+    }
+  },
+  {
+    label: "用户ID",
+    prop: "userId",
+    valueType: "copy",
+    fieldProps: {
+      placeholder: "请输入用户ID"
+    }
+  },
+  {
+    label: "反馈标题",
+    prop: "title",
+    valueType: "copy",
+    fieldProps: {
+      placeholder: "请输入标题"
+    }
+  },
+  {
+    label: "反馈内容",
+    prop: "content",
+    valueType: "copy",
+    fieldProps: {
+      placeholder: "请输入内容"
+    }
+  },
+  {
+    label: "回复内容",
+    prop: "replyContent",
+    valueType: "copy",
+    fieldProps: {
+      placeholder: "请输入回复内容"
     }
   }
 ];

@@ -1,5 +1,4 @@
 import { ref, reactive, type Ref } from "vue";
-import { useDetail } from "./useDetail";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
@@ -16,11 +15,10 @@ const multipleSelection = ref<FeedbackVO[]>([]);
 
 export function useColumns(
   searchParams?: Ref<FeedbackQuery>,
-  onEdit?: (row: FeedbackVO) => void,
-  onDetail?: (row: FeedbackVO) => void
+  onEdit?: (row: FeedbackVO) => void
+  // _onDetail?: (row: FeedbackVO) => void
 ) {
   const dataList = ref<FeedbackVO[]>([]);
-  const { toDetail } = useDetail();
   const loading = ref(true);
   const columns: TableColumnList = [
     {
@@ -66,13 +64,6 @@ export function useColumns(
       label: "操作",
       cellRenderer: ({ index, row }) => (
         <>
-          <el-button
-            size="small"
-            type="primary"
-            onClick={() => handleDetail(index + 1, row)}
-          >
-            详情
-          </el-button>
           <el-button
             size="small"
             type="warning"
@@ -155,16 +146,6 @@ export function useColumns(
       loading.value = false;
     }
   }
-
-  const handleDetail = (index: number, row: FeedbackVO) => {
-    if (onDetail) {
-      onDetail(row);
-    } else {
-      const id = row.id.toString();
-      const title = row.title || "反馈详情";
-      toDetail({ id }, title);
-    }
-  };
 
   const handleEdit = (index: number, row: FeedbackVO) => {
     if (onEdit) {
