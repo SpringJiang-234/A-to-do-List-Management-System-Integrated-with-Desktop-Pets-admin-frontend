@@ -87,7 +87,7 @@ export type PageResult<T> = {
 
 // 登录
 export const getLogin = (data: { account: string; password: string }) => {
-  return http.request<UserResult>("post", "/api/login", {
+  return http.request<UserResult>("post", "/api/security/login", {
     data
   });
 };
