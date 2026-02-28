@@ -1,11 +1,13 @@
 import { http } from "@/utils/http";
 
+// 返回结果类型
 export type AnnouncementResult = {
   code: number;
   msg: string;
   data: any;
 };
 
+// 请求参数类型
 export type AnnouncementDTO = {
   id?: number;
   title?: string;
@@ -15,6 +17,7 @@ export type AnnouncementDTO = {
   updateTime?: string;
 };
 
+// 查询参数类型
 export type AnnouncementQuery = {
   title?: string;
   content?: string;
@@ -31,6 +34,7 @@ export type AnnouncementQuery = {
   pageSize?: number;
 };
 
+// 响应数据类型
 export type AnnouncementVO = {
   id: number;
   title: string;
@@ -40,6 +44,7 @@ export type AnnouncementVO = {
   updateTime: string;
 };
 
+// 详情数据类型
 export type AnnouncementDetails = {
   id: number;
   title: string;
@@ -49,6 +54,7 @@ export type AnnouncementDetails = {
   updateTime: string;
 };
 
+// 分页结果类型
 export type PageResult<T> = {
   records: T[];
   total: number;
@@ -56,18 +62,21 @@ export type PageResult<T> = {
   size: number;
 };
 
+// 新增公告
 export const insertAnnouncement = (data: AnnouncementDTO) => {
   return http.request<AnnouncementResult>("post", "/api/announcement/insert", {
     data
   });
 };
 
+// 更新公告
 export const updateAnnouncement = (data: AnnouncementDTO) => {
   return http.request<AnnouncementResult>("post", "/api/announcement/update", {
     data
   });
 };
 
+// 删除公告
 export const deleteAnnouncement = (id: number) => {
   return http.request<AnnouncementResult>(
     "get",
@@ -75,6 +84,7 @@ export const deleteAnnouncement = (id: number) => {
   );
 };
 
+// 批量删除公告
 export const batchDeleteAnnouncement = (ids: string) => {
   return http.request<AnnouncementResult>(
     "get",
@@ -82,12 +92,14 @@ export const batchDeleteAnnouncement = (ids: string) => {
   );
 };
 
+// 获取公告分页列表
 export const getAnnouncementPage = (data: AnnouncementQuery) => {
   return http.request<AnnouncementResult>("post", "/api/announcement/page", {
     data
   });
 };
 
+// 获取公告详情：暂时没用
 export const getAnnouncementDetails = (id: number) => {
   return http.request<AnnouncementResult>(
     "get",
@@ -95,6 +107,7 @@ export const getAnnouncementDetails = (id: number) => {
   );
 };
 
+// 导出公告
 export const exportAnnouncement = (data: AnnouncementQuery) => {
   return http.request<Blob>("post", "/api/announcement/export", {
     data,
@@ -102,6 +115,7 @@ export const exportAnnouncement = (data: AnnouncementQuery) => {
   });
 };
 
+// 导入公告
 export const importAnnouncement = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -113,6 +127,7 @@ export const importAnnouncement = (file: File) => {
   });
 };
 
+// 下载公告导入模板
 export const downloadTemplate = () => {
   return http.request<Blob>("get", "/api/announcement/downloadTemplate", {
     responseType: "blob"

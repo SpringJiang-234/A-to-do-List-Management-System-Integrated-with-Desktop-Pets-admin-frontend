@@ -1,5 +1,6 @@
 import { http } from "@/utils/http";
 
+// 返回结果类型
 export type UserResult = {
   code: number;
   msg: string;
@@ -7,6 +8,7 @@ export type UserResult = {
   success?: boolean;
 };
 
+// 刷新Token结果类型
 export type RefreshTokenResult = {
   code: number;
   msg: string;
@@ -17,6 +19,7 @@ export type RefreshTokenResult = {
   };
 };
 
+// 请求参数类型
 export type UserDTO = {
   id?: number;
   account?: string;
@@ -29,6 +32,7 @@ export type UserDTO = {
   type?: number; // 1-管理员 2-普通用户
 };
 
+// 查询参数类型
 export type UserQuery = {
   account?: string;
   nickname?: string;
@@ -43,6 +47,7 @@ export type UserQuery = {
   pageSize?: number;
 };
 
+// 响应数据类型
 export type UserVO = {
   id: number;
   account?: string;
@@ -55,6 +60,7 @@ export type UserVO = {
   type?: string; // 管理员/普通用户
 };
 
+// 详情数据类型
 export type UserDetails = {
   id: number;
   account?: string;
@@ -69,6 +75,7 @@ export type UserDetails = {
   updateTime: string;
 };
 
+// 分页结果类型
 export type PageResult<T> = {
   records: T[];
   total: number;
@@ -76,50 +83,61 @@ export type PageResult<T> = {
   size: number;
 };
 
-// 登录相关API
+/* 登录相关API */
+
+// 登录
 export const getLogin = (data: { account: string; password: string }) => {
   return http.request<UserResult>("post", "/api/login", {
     data
   });
 };
 
+// 刷新Token
 export const refreshTokenApi = (data: { refreshToken: string }) => {
   return http.request<RefreshTokenResult>("post", "/api/refreshToken", {
     data
   });
 };
 
-// 用户管理API
+/* 用户管理API */
+
+// 新增用户
 export const insertUser = (data: UserDTO) => {
   return http.request<UserResult>("post", "/api/user/insert", {
     data
   });
 };
 
+// 更新用户
 export const updateUser = (data: UserDTO) => {
   return http.request<UserResult>("post", "/api/user/update", {
     data
   });
 };
 
+// 删除用户
 export const deleteUser = (id: number) => {
   return http.request<UserResult>("get", `/api/user/delete/${id}`);
 };
 
+// 批量删除用户
 export const batchDeleteUser = (ids: string) => {
   return http.request<UserResult>("get", `/api/user/batchDelete/${ids}`);
 };
 
+// 获取用户分页列表
 export const getUserPage = (data: UserQuery) => {
   return http.request<UserResult>("post", "/api/user/page", {
     data
   });
 };
 
+// 获取用户详情：要用
 export const getUserDetails = (id: number) => {
   return http.request<UserResult>("get", `/api/user/details/${id}`);
 };
 
+// 导出用户
 export const exportUser = (data: UserQuery) => {
   return http.request<Blob>("post", "/api/user/export", {
     data,
@@ -127,6 +145,7 @@ export const exportUser = (data: UserQuery) => {
   });
 };
 
+// 导入用户
 export const importUser = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
@@ -138,6 +157,7 @@ export const importUser = (file: File) => {
   });
 };
 
+// 下载用户导入模板
 export const downloadTemplate = () => {
   return http.request<Blob>("get", "/api/user/downloadTemplate", {
     responseType: "blob"
