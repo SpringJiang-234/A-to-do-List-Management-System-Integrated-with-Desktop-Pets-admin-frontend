@@ -592,72 +592,74 @@ onMounted(() => {
 </script>
 
 <template>
-  <!-- 用户管理搜索栏 -->
-  <div class="user-container">
-    <div>
-      <PlusSearch
-        v-model="state"
-        :columns="SearchColumns"
-        :show-number="2"
-        label-width="80"
-        label-position="right"
-        @change="handleChange"
-        @search="handleSearch"
-        @reset="handleRest"
+  <div>
+    <!-- 用户管理搜索栏 -->
+    <div class="user-container">
+      <div>
+        <PlusSearch
+          v-model="state"
+          :columns="SearchColumns"
+          :show-number="2"
+          label-width="80"
+          label-position="right"
+          @change="handleChange"
+          @search="handleSearch"
+          @reset="handleRest"
+        />
+      </div>
+
+      <!-- 操作按钮 -->
+      <TableActions
+        :on-add="handleAdd"
+        :on-import="handleImport"
+        :on-export="handleExport"
+        :on-batch-delete="handleBatchDelete"
+        :on-download-template="handleDownloadTemplate"
+      />
+
+      <!-- 表格 -->
+      <div class="table-wrapper">
+        <pure-table
+          ref="tableRef"
+          border
+          row-key="id"
+          alignWhole="center"
+          showOverflowTooltip
+          :loading="loading"
+          :loading-config="loadingConfig"
+          :height="TABLE_HEIGHT"
+          :data="dataList"
+          :columns="columns"
+          :pagination="pagination"
+          :header-cell-style="{
+            backgroundColor: '#e8e8e8',
+            color: '#303133',
+            fontWeight: '600'
+          }"
+          @page-size-change="onSizeChange"
+          @page-current-change="onCurrentChange"
+          @selection-change="handleSelectionChange"
+        />
+      </div>
+
+      <!-- 新增用户对话框 -->
+      <PlusDialogForm
+        v-model:visible="dialogVisible"
+        v-model="formData"
+        :dialog="{ title: '新增用户' }"
+        :form="{ columns: dialogColumns }"
+        @confirm="handleSubmit"
+      />
+
+      <!-- 编辑用户对话框 -->
+      <PlusDialogForm
+        v-model:visible="editDialogVisible"
+        v-model="editFormData"
+        :dialog="{ title: '编辑用户' }"
+        :form="{ columns: dialogColumns }"
+        @confirm="handleEditSubmit"
       />
     </div>
-
-    <!-- 操作按钮 -->
-    <TableActions
-      :on-add="handleAdd"
-      :on-import="handleImport"
-      :on-export="handleExport"
-      :on-batch-delete="handleBatchDelete"
-      :on-download-template="handleDownloadTemplate"
-    />
-
-    <!-- 表格 -->
-    <div class="table-wrapper">
-      <pure-table
-        ref="tableRef"
-        border
-        row-key="id"
-        alignWhole="center"
-        showOverflowTooltip
-        :loading="loading"
-        :loading-config="loadingConfig"
-        :height="TABLE_HEIGHT"
-        :data="dataList"
-        :columns="columns"
-        :pagination="pagination"
-        :header-cell-style="{
-          backgroundColor: '#e8e8e8',
-          color: '#303133',
-          fontWeight: '600'
-        }"
-        @page-size-change="onSizeChange"
-        @page-current-change="onCurrentChange"
-        @selection-change="handleSelectionChange"
-      />
-    </div>
-
-    <!-- 新增用户对话框 -->
-    <PlusDialogForm
-      v-model:visible="dialogVisible"
-      v-model="formData"
-      :dialog="{ title: '新增用户' }"
-      :form="{ columns: dialogColumns }"
-      @confirm="handleSubmit"
-    />
-
-    <!-- 编辑用户对话框 -->
-    <PlusDialogForm
-      v-model:visible="editDialogVisible"
-      v-model="editFormData"
-      :dialog="{ title: '编辑用户' }"
-      :form="{ columns: dialogColumns }"
-      @confirm="handleEditSubmit"
-    />
   </div>
 </template>
 

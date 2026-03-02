@@ -243,47 +243,49 @@ watch(
 </script>
 
 <template>
-  <!-- 桌宠管理搜索栏 -->
-  <div class="desktoppet-container">
-    <div>
-      <PlusSearch
-        v-model="state"
-        :columns="SearchColumns"
-        :show-number="2"
-        label-width="80"
-        label-position="right"
-        @change="handleChange"
-        @search="handleSearch"
-        @reset="handleRest"
-      />
-    </div>
+  <div>
+    <!-- 桌宠管理搜索栏 -->
+    <div class="desktoppet-container">
+      <div>
+        <PlusSearch
+          v-model="state"
+          :columns="SearchColumns"
+          :show-number="2"
+          label-width="80"
+          label-position="right"
+          @change="handleChange"
+          @search="handleSearch"
+          @reset="handleRest"
+        />
+      </div>
 
-    <!-- 操作按钮 -->
-    <TableActions :on-export="handleExport" />
+      <!-- 操作按钮 -->
+      <TableActions :on-export="handleExport" />
 
-    <!-- 表格 -->
-    <div class="table-wrapper">
-      <pure-table
-        ref="tableRef"
-        border
-        row-key="id"
-        alignWhole="center"
-        showOverflowTooltip
-        :header-cell-style="{
-          backgroundColor: '#e8e8e8',
-          color: '#303133',
-          fontWeight: '600'
-        }"
-        :loading="loading"
-        :loading-config="loadingConfig"
-        :height="TABLE_HEIGHT"
-        :data="dataList"
-        :columns="columns"
-        :pagination="pagination"
-        @page-size-change="onSizeChange"
-        @page-current-change="onCurrentChange"
-        @selection-change="handleSelectionChange"
-      />
+      <!-- 表格 -->
+      <div class="table-wrapper">
+        <pure-table
+          ref="tableRef"
+          border
+          row-key="id"
+          alignWhole="center"
+          showOverflowTooltip
+          :header-cell-style="{
+            backgroundColor: '#e8e8e8',
+            color: '#303133',
+            fontWeight: '600'
+          }"
+          :loading="loading"
+          :loading-config="loadingConfig"
+          :height="TABLE_HEIGHT"
+          :data="dataList"
+          :columns="columns"
+          :pagination="pagination"
+          @page-size-change="onSizeChange"
+          @page-current-change="onCurrentChange"
+          @selection-change="handleSelectionChange"
+        />
+      </div>
     </div>
   </div>
 </template>
