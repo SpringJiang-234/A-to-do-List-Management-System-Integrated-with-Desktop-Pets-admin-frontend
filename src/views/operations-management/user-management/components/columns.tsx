@@ -4,7 +4,7 @@ import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import {
   getUserPage,
-  deleteUser,
+  cancelUser,
   type UserQuery,
   type UserVO
 } from "@/api/user";
@@ -109,7 +109,7 @@ export function useColumns(
             type="danger"
             onClick={() => handleDelete(index + 1, row)}
           >
-            删除
+            注销
           </el-button>
         </>
       )
@@ -194,8 +194,8 @@ export function useColumns(
   const handleDelete = async (index: number, row: UserVO) => {
     try {
       await ElMessageBox.confirm(
-        `确定要删除用户"${row.account}"吗？`,
-        "删除确认",
+        `确定要注销用户"${row.account}"吗？`,
+        "注销确认",
         {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
@@ -203,16 +203,16 @@ export function useColumns(
         }
       );
 
-      const result = await deleteUser(row.id);
+      const result = await cancelUser(row.id);
       if (result.code === 200) {
-        message("删除成功", { type: "success" });
+        message("注销成功", { type: "success" });
         fetchUserList();
       } else {
-        message(result.msg || "删除失败", { type: "error" });
+        message(result.msg || "注销失败", { type: "error" });
       }
     } catch (error) {
       if (error !== "cancel") {
-        message("删除失败", { type: "error" });
+        message("注销失败", { type: "error" });
       }
     }
   };

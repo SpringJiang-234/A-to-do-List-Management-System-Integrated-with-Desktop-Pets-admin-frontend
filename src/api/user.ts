@@ -116,14 +116,14 @@ export const updateUser = (data: UserDTO) => {
 };
 
 // 删除用户
-export const deleteUser = (id: number) => {
-  return http.request<UserResult>("get", `/api/user/delete/${id}`);
-};
+// export const deleteUser = (id: number) => {
+//   return http.request<UserResult>("get", `/api/user/delete/${id}`);
+// };
 
 // 批量删除用户
-export const batchDeleteUser = (ids: string) => {
-  return http.request<UserResult>("get", `/api/user/batchDelete/${ids}`);
-};
+// export const batchDeleteUser = (ids: string) => {
+//   return http.request<UserResult>("get", `/api/user/batchDelete/${ids}`);
+// };
 
 // 获取用户分页列表
 export const getUserPage = (data: UserQuery) => {
@@ -162,4 +162,14 @@ export const downloadTemplate = () => {
   return http.request<Blob>("get", "/api/user/downloadTemplate", {
     responseType: "blob"
   });
+};
+
+// 注销用户
+export const cancelUser = (id: number) => {
+  return http.request<UserResult>("get", `/api/user/cancel/${id}`);
+};
+
+// 批量注销用户
+export const batchCancelUser = (ids: string) => {
+  return http.request<UserResult>("get", `/api/user/batchCancel/${ids}`);
 };

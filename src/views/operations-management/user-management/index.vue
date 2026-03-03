@@ -16,11 +16,11 @@ import Details from "./components/Details.vue";
 import {
   insertUser,
   updateUser,
-  batchDeleteUser,
   exportUser,
   importUser,
   downloadTemplate,
   getUserDetails,
+  batchCancelUser,
   type UserDTO,
   type UserQuery
 } from "@/api/user";
@@ -499,11 +499,11 @@ const handleEditSubmit = async () => {
 };
 
 /**
- * 批量删除用户
+ * 批量注销用户
  */
 const handleBatchDelete = async () => {
   if (!multipleSelection.value || multipleSelection.value.length === 0) {
-    ElMessage.warning("请先选择要删除的数据");
+    ElMessage.warning("请先选择要注销的数据");
     return;
   }
 
@@ -512,8 +512,8 @@ const handleBatchDelete = async () => {
 
   try {
     await ElMessageBox.confirm(
-      `确定要删除选中的 ${count} 个用户吗？`,
-      "批量删除确认",
+      `确定要注销选中的 ${count} 个用户吗？`,
+      "批量注销确认",
       {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -521,16 +521,16 @@ const handleBatchDelete = async () => {
       }
     );
 
-    const result = await batchDeleteUser(ids);
+    const result = await batchCancelUser(ids);
     if (result.code === 200) {
-      ElMessage.success("批量删除成功");
+      ElMessage.success(result.msg || "批量注销成功");
       fetchUserList();
     } else {
-      ElMessage.error(result.msg || "批量删除失败");
+      ElMessage.error(result.msg || "批量注销失败");
     }
   } catch (error) {
     if (error !== "cancel") {
-      ElMessage.error("批量删除失败");
+      ElMessage.error("批量注销失败");
     }
   }
 };
