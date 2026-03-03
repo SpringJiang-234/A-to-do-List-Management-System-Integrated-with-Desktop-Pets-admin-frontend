@@ -10,6 +10,7 @@ const props = defineProps<{
   title?: string;
   content?: string;
   mode?: "detail" | "edit";
+  isTop?: number;
 }>();
 
 const emit = defineEmits<{
@@ -19,6 +20,7 @@ const emit = defineEmits<{
 
 const title = ref(props.title || "");
 const text = ref(props.content || "");
+const isTop = ref(props.isTop || 1);
 
 const isEdit = computed(() => props.mode === "edit");
 
@@ -36,9 +38,17 @@ watch(
   }
 );
 
+watch(
+  () => props.isTop,
+  newVal => {
+    isTop.value = newVal || 1;
+  }
+);
+
 defineExpose({
   title,
-  text
+  text,
+  isTop
 });
 </script>
 
@@ -52,6 +62,18 @@ defineExpose({
           placeholder="请输入公告标题"
           :readonly="!isEdit"
         />
+        <!-- 是否置顶 -->
+        <div class="is-top-switch">
+          <span class="switch-label">是否置顶</span>
+          <el-switch
+            v-model="isTop"
+            :active-value="2"
+            :inactive-value="1"
+            :disabled="!isEdit"
+            active-text="是"
+            inactive-text="否"
+          />
+        </div>
       </div>
     </template>
     <Vditor
@@ -73,5 +95,22 @@ defineExpose({
 .dialog-footer {
   margin-top: 20px;
   text-align: right;
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.is-top-switch {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.switch-label {
+  font-size: 14px;
+  color: #606266;
 }
 </style>

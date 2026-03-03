@@ -80,6 +80,7 @@ const editData = ref<{
 interface DetailsExpose {
   title: string;
   text: string;
+  isTop: number;
 }
 
 const editDetailsRef = ref<DetailsExpose | null>(null);
@@ -88,9 +89,10 @@ const editDetailsRef = ref<DetailsExpose | null>(null);
  * 详情公告对话框状态
  */
 const detailDialogVisible = ref(false);
-const detailData = ref<{ title: string; content: string }>({
+const detailData = ref<{ title: string; content: string; isTop: number }>({
   title: "",
-  content: ""
+  content: "",
+  isTop: 1
 });
 
 /**
@@ -296,7 +298,8 @@ const handleSubmit = async () => {
 const handleDetail = (row: any) => {
   detailData.value = {
     title: row.title,
-    content: row.content
+    content: row.content,
+    isTop: row.isTop === "2" || row.isTop === "是" ? 2 : 1
   };
   detailDialogVisible.value = true;
 };
@@ -309,7 +312,7 @@ const handleEdit = (row: any) => {
     title: row.title,
     content: row.content,
     id: row.id,
-    isTop: row.isTop === "2" ? 2 : 1
+    isTop: row.isTop === "2" || row.isTop === "是" ? 2 : 1
   };
   editDialogVisible.value = true;
 };
@@ -321,12 +324,13 @@ const handleEditSubmit = async () => {
   try {
     const titleValue = editDetailsRef.value?.title || editData.value.title;
     const contentValue = editDetailsRef.value?.text || editData.value.content;
+    const isTopValue = editDetailsRef.value?.isTop || editData.value.isTop;
 
     const data = {
       title: titleValue,
       content: contentValue,
       id: editData.value.id,
-      isTop: editData.value.isTop
+      isTop: isTopValue
     } as AnnouncementDTO;
     const result = await updateAnnouncement(data);
     if (result.code === 200) {
@@ -563,6 +567,7 @@ watch(
           ref="editDetailsRef"
           :title="editData.title"
           :content="editData.content"
+          :is-top="editData.isTop"
           mode="edit"
           @confirm="handleEditSubmit"
           @cancel="handleEditCancel"
@@ -579,6 +584,7 @@ watch(
         <Details
           :title="detailData.title"
           :content="detailData.content"
+          :is-top="detailData.isTop"
           mode="detail"
         />
       </el-dialog>
