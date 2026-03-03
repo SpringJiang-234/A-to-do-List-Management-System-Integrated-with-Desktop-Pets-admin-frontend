@@ -284,6 +284,7 @@ const handleSubmit = async () => {
     if (result.code === 200) {
       ElMessage.success(result.msg || "新增成功");
       dialogVisible.value = false;
+      fetchAnnouncementList();
     } else {
       ElMessage.error(result.msg || "新增失败");
     }
