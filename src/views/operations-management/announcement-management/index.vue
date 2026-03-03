@@ -20,6 +20,7 @@ import {
   importAnnouncement,
   downloadTemplate,
   batchDeleteAnnouncement,
+  getAnnouncementDetails,
   type AnnouncementDTO,
   type AnnouncementQuery
 } from "@/api/announcement";
@@ -65,15 +66,14 @@ const formData = ref<FieldValues>({});
  * 编辑公告对话框状态
  */
 const editDialogVisible = ref(false);
+const editId = ref<number>(0);
 const editData = ref<{
   title: string;
   content: string;
-  id: number;
   isTop: number;
 }>({
   title: "",
   content: "",
-  id: 0,
   isTop: 1
 });
 
@@ -295,26 +295,46 @@ const handleSubmit = async () => {
 /**
  * 查看公告详情
  */
-const handleDetail = (row: any) => {
-  detailData.value = {
-    title: row.title,
-    content: row.content,
-    isTop: row.isTop === "2" || row.isTop === "是" ? 2 : 1
-  };
-  detailDialogVisible.value = true;
+const handleDetail = async (row: any) => {
+  try {
+    const result = await getAnnouncementDetails(row.id);
+    if (result.code === 200) {
+      const data = result.data;
+      detailData.value = {
+        title: data.title,
+        content: data.content,
+        isTop: data.isTop === "2" || data.isTop === "是" ? 2 : 1
+      };
+      detailDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取详情失败");
+  }
 };
 
 /**
  * 编辑公告
  */
-const handleEdit = (row: any) => {
-  editData.value = {
-    title: row.title,
-    content: row.content,
-    id: row.id,
-    isTop: row.isTop === "2" || row.isTop === "是" ? 2 : 1
-  };
-  editDialogVisible.value = true;
+const handleEdit = async (row: any) => {
+  try {
+    const result = await getAnnouncementDetails(row.id);
+    if (result.code === 200) {
+      const data = result.data;
+      editId.value = data.id;
+      editData.value = {
+        title: data.title,
+        content: data.content,
+        isTop: data.isTop === "2" || data.isTop === "是" ? 2 : 1
+      };
+      editDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取详情失败");
+  }
 };
 
 /**
@@ -322,15 +342,16 @@ const handleEdit = (row: any) => {
  */
 const handleEditSubmit = async () => {
   try {
-    const titleValue = editDetailsRef.value?.title || editData.value.title;
-    const contentValue = editDetailsRef.value?.text || editData.value.content;
-    const isTopValue = editDetailsRef.value?.isTop || editData.value.isTop;
+    if (!editDetailsRef.value) {
+      ElMessage.error("编辑组件未就绪");
+      return;
+    }
 
     const data = {
-      title: titleValue,
-      content: contentValue,
-      id: editData.value.id,
-      isTop: isTopValue
+      title: editDetailsRef.value.title,
+      content: editDetailsRef.value.text,
+      id: editId.value,
+      isTop: editDetailsRef.value.isTop
     } as AnnouncementDTO;
     const result = await updateAnnouncement(data);
     if (result.code === 200) {

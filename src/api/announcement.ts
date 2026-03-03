@@ -99,7 +99,7 @@ export const getAnnouncementPage = (data: AnnouncementQuery) => {
   });
 };
 
-// 获取公告详情：暂时没用
+// 获取公告详情
 export const getAnnouncementDetails = (id: number) => {
   return http.request<AnnouncementResult>(
     "get",
