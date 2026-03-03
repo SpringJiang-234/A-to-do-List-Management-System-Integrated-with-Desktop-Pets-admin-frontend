@@ -40,7 +40,16 @@ export function useColumns(
     },
     {
       label: "处理状态",
-      prop: "status"
+      prop: "status",
+      cellRenderer: ({ row }) => {
+        const statusMap = {
+          未受理: { type: "danger" },
+          已受理: { type: "warning" },
+          已解决: { type: "success" }
+        };
+        const statusConfig = statusMap[row.status] || { type: "info" };
+        return <el-tag type={statusConfig.type}>{row.status}</el-tag>;
+      }
     },
     {
       label: "创建时间",
