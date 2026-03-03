@@ -683,4 +683,8 @@ onMounted(() => {
 .feedback-container {
   margin: 10px;
 }
+
+.feedback-container :deep(.plus-search__unfold) {
+  margin-left: 20px !important;
+}
 </style>

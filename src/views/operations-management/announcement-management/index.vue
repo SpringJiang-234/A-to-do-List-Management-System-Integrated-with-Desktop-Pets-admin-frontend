@@ -618,4 +618,8 @@ watch(
 .announcement-container {
   margin: 10px;
 }
+
+.announcement-container :deep(.plus-search__unfold) {
+  margin-left: 20px !important;
+}
 </style>

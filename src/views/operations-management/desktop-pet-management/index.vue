@@ -438,4 +438,8 @@ watch(
 .desktoppet-container {
   margin: 10px;
 }
+
+.desktoppet-container :deep(.plus-search__unfold) {
+  margin-left: 20px !important;
+}
 </style>

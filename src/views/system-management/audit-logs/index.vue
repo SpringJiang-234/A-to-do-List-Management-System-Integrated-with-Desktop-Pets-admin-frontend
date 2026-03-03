@@ -308,4 +308,8 @@ watch(
 .audit-log-container {
   margin: 10px;
 }
+
+.audit-log-container :deep(.plus-search__unfold) {
+  margin-left: 20px !important;
+}
 </style>
