@@ -68,10 +68,16 @@ export function useColumns(
       prop: "status",
       cellRenderer: ({ row }) => {
         const statusMap = {
-          "1": "正常",
-          "2": "已注销"
+          "1": { text: "正常", type: "success" },
+          "2": { text: "已注销", type: "danger" },
+          正常: { text: "正常", type: "success" },
+          已注销: { text: "已注销", type: "danger" }
         };
-        return statusMap[row.status] || row.status;
+        const statusConfig = statusMap[row.status] || {
+          text: row.status,
+          type: "info"
+        };
+        return <el-tag type={statusConfig.type}>{statusConfig.text}</el-tag>;
       }
     },
     {
@@ -160,9 +166,9 @@ export function useColumns(
     loading.value = true;
     try {
       const params: UserQuery = {
+        ...searchParams?.value,
         pageNum: pagination.currentPage,
-        pageSize: pagination.pageSize,
-        ...searchParams?.value
+        pageSize: pagination.pageSize
       };
       const result = await getUserPage(params);
       if (result.code === 200) {
