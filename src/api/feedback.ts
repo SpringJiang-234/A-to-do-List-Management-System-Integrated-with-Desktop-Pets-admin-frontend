@@ -101,7 +101,7 @@ export const getFeedbackPage = (data: FeedbackQuery) => {
   });
 };
 
-// 获取反馈详情：暂时没用
+// 获取反馈详情
 export const getFeedbackDetails = (id: number) => {
   return http.request<FeedbackResult>("get", `/api/feedback/details/${id}`);
 };

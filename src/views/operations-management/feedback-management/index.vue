@@ -26,6 +26,7 @@ import {
   importFeedback,
   batchDeleteFeedback,
   downloadTemplate,
+  getFeedbackDetails,
   type FeedbackDTO,
   type FeedbackQuery
 } from "@/api/feedback";
@@ -350,30 +351,50 @@ const handleSubmit = async () => {
 /**
  * 编辑反馈
  */
-const handleEdit = (row: any) => {
-  editId.value = row.id;
-  editFormData.value = {
-    userId: row.userId,
-    title: row.title,
-    content: row.content,
-    status: row.status === "未受理" ? 1 : row.status === "已受理" ? 2 : 3,
-    replyContent: row.replyContent || ""
-  };
-  editDialogVisible.value = true;
+const handleEdit = async (row: any) => {
+  try {
+    const result = await getFeedbackDetails(row.id);
+    if (result.code === 200) {
+      const data = result.data;
+      editId.value = data.id;
+      editFormData.value = {
+        userId: data.userId,
+        title: data.title,
+        content: data.content,
+        status: data.status === "未受理" ? 1 : data.status === "已受理" ? 2 : 3,
+        replyContent: data.replyContent || ""
+      };
+      editDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取详情失败");
+  }
 };
 
 /**
  * 详情反馈
  */
-const handleDetail = (row: any) => {
-  detailFormData.value = {
-    userId: String(row.userId || ""),
-    title: row.title || "",
-    content: row.content || "",
-    status: row.status === "未受理" ? 1 : row.status === "已受理" ? 2 : 3,
-    replyContent: row.replyContent || ""
-  };
-  detailDialogVisible.value = true;
+const handleDetail = async (row: any) => {
+  try {
+    const result = await getFeedbackDetails(row.id);
+    if (result.code === 200) {
+      const data = result.data;
+      detailFormData.value = {
+        userId: String(data.userId || ""),
+        title: data.title || "",
+        content: data.content || "",
+        status: data.status === "未受理" ? 1 : data.status === "已受理" ? 2 : 3,
+        replyContent: data.replyContent || ""
+      };
+      detailDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取详情失败");
+  }
 };
 
 /**
