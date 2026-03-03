@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { useColumns } from "./components/columns";
-import { ref, onActivated, onDeactivated, watch, onMounted } from "vue";
+import {
+  ref,
+  onActivated,
+  onDeactivated,
+  watch,
+  onMounted,
+  computed
+} from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";
 import "plus-pro-components/es/components/dialog-form/style/css";
@@ -70,6 +77,27 @@ const formData = ref<FieldValues>({});
 const editDialogVisible = ref(false);
 const editFormData = ref<FieldValues>({});
 const editId = ref<number | null>(null);
+
+/**
+ * 详情反馈对话框状态
+ */
+const detailDialogVisible = ref(false);
+const detailFormData = ref({
+  userId: "",
+  title: "",
+  content: "",
+  status: 1,
+  replyContent: ""
+});
+
+const statusText = computed(() => {
+  const statusMap = {
+    1: "未受理",
+    2: "已受理",
+    3: "已解决"
+  };
+  return statusMap[detailFormData.value.status] || "";
+});
 
 /**
  * 对话框表单列配置
@@ -335,6 +363,20 @@ const handleEdit = (row: any) => {
 };
 
 /**
+ * 详情反馈
+ */
+const handleDetail = (row: any) => {
+  detailFormData.value = {
+    userId: String(row.userId || ""),
+    title: row.title || "",
+    content: row.content || "",
+    status: row.status === "未受理" ? 1 : row.status === "已受理" ? 2 : 3,
+    replyContent: row.replyContent || ""
+  };
+  detailDialogVisible.value = true;
+};
+
+/**
  * 提交编辑反馈
  */
 const handleEditSubmit = async () => {
@@ -481,7 +523,7 @@ const {
   tableRef,
   multipleSelection,
   handleSelectionChange
-} = useColumns(searchParams, handleEdit);
+} = useColumns(searchParams, handleEdit, handleDetail);
 
 onActivated(() => {
   console.log("反馈管理 - onActivated 触发");
@@ -576,6 +618,42 @@ onMounted(() => {
         :form="{ columns: dialogColumns }"
         @confirm="handleEditSubmit"
       />
+
+      <!-- 详情反馈对话框 -->
+      <el-dialog
+        v-model="detailDialogVisible"
+        title="反馈详情"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <el-form :model="detailFormData" label-width="100px">
+          <el-form-item label="用户ID">
+            <el-input v-model="detailFormData.userId" disabled />
+          </el-form-item>
+          <el-form-item label="反馈标题">
+            <el-input v-model="detailFormData.title" disabled />
+          </el-form-item>
+          <el-form-item label="反馈内容">
+            <el-input
+              v-model="detailFormData.content"
+              type="textarea"
+              :rows="4"
+              disabled
+            />
+          </el-form-item>
+          <el-form-item label="处理状态">
+            <el-input v-model="statusText" disabled />
+          </el-form-item>
+          <el-form-item label="回复内容">
+            <el-input
+              v-model="detailFormData.replyContent"
+              type="textarea"
+              :rows="4"
+              disabled
+            />
+          </el-form-item>
+        </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>

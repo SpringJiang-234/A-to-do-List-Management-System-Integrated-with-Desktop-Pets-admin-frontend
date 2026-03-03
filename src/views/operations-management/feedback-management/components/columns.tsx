@@ -15,8 +15,8 @@ const multipleSelection = ref<FeedbackVO[]>([]);
 
 export function useColumns(
   searchParams?: Ref<FeedbackQuery>,
-  onEdit?: (row: FeedbackVO) => void
-  // _onDetail?: (row: FeedbackVO) => void
+  onEdit?: (row: FeedbackVO) => void,
+  onDetail?: (row: FeedbackVO) => void
 ) {
   const dataList = ref<FeedbackVO[]>([]);
   const loading = ref(true);
@@ -71,8 +71,16 @@ export function useColumns(
     },
     {
       label: "操作",
+      width: 200,
       cellRenderer: ({ index, row }) => (
         <>
+          <el-button
+            size="small"
+            type="primary"
+            onClick={() => handleDetail(row)}
+          >
+            详情
+          </el-button>
           <el-button
             size="small"
             type="warning"
@@ -155,6 +163,11 @@ export function useColumns(
       loading.value = false;
     }
   }
+  const handleDetail = (row: FeedbackVO) => {
+    if (onDetail) {
+      onDetail(row);
+    }
+  };
 
   const handleEdit = (index: number, row: FeedbackVO) => {
     if (onEdit) {
