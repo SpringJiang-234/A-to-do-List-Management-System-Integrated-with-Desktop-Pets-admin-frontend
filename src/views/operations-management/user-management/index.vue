@@ -675,6 +675,7 @@ onMounted(() => {
         :on-export="handleExport"
         :on-batch-delete="handleBatchDelete"
         :on-download-template="handleDownloadTemplate"
+        batch-delete-text="批量注销"
       />
 
       <!-- 表格 -->

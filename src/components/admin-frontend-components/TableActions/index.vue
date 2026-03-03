@@ -7,9 +7,12 @@ interface Props {
   onExport?: () => void;
   onBatchDelete?: () => void;
   onDownloadTemplate?: () => void;
+  batchDeleteText?: string;
 }
 
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  batchDeleteText: "批量删除"
+});
 </script>
 
 <template>
@@ -20,9 +23,9 @@ defineProps<Props>();
     <el-button v-if="onDownloadTemplate" @click="onDownloadTemplate"
       >下载模板</el-button
     >
-    <el-button v-if="onBatchDelete" type="danger" @click="onBatchDelete"
-      >批量删除</el-button
-    >
+    <el-button type="danger" @click="onBatchDelete">{{
+      batchDeleteText
+    }}</el-button>
   </div>
 </template>
 
