@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useColumns } from "./columns";
+import { useColumns } from "./components/columns";
 import { ref, onActivated, onDeactivated, watch } from "vue";
 import { ElMessage } from "element-plus";
 import "plus-pro-components/es/components/form/style/css";

@@ -70,7 +70,7 @@ export default {
       name: "DesktopPetDetail",
       component: () =>
         import(
-          "@/views/operations-management/desktop-pet-management/detail.vue"
+          "@/views/operations-management/desktop-pet-management/components/detail.vue"
         ),
       meta: {
         title: "桌宠详情",
