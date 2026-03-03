@@ -1,5 +1,4 @@
 import { ref, reactive, type Ref } from "vue";
-import { useDetail } from "./useDetail";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import {
@@ -17,7 +16,6 @@ export function useColumns(
   onDetail?: (row: DesktopPetVO) => void
 ) {
   const dataList = ref<DesktopPetVO[]>([]);
-  const { toDetail } = useDetail();
   const loading = ref(true);
   const columns: TableColumnList = [
     {
@@ -136,10 +134,6 @@ export function useColumns(
   const handleDetail = (index: number, row: DesktopPetVO) => {
     if (onDetail) {
       onDetail(row);
-    } else {
-      const id = row.id.toString();
-      const nickname = row.nickname || "桌宠详情";
-      toDetail({ id }, nickname);
     }
   };
 

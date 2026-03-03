@@ -10,7 +10,12 @@ import {
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
-import { exportDesktopPet, type DesktopPetQuery } from "@/api/desktop-pet";
+import Details from "./components/Details.vue";
+import {
+  exportDesktopPet,
+  getDesktopPetDetails,
+  type DesktopPetQuery
+} from "@/api/desktop-pet";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { useRoute } from "vue-router";
 
@@ -45,6 +50,52 @@ const searchParams = ref<DesktopPetQuery>({
   createTime: undefined,
   updateTime: undefined
 });
+
+/**
+ * 详情对话框状态
+ */
+const detailDialogVisible = ref(false);
+const detailData = ref<{
+  id?: number;
+  userId?: number;
+  nickname?: string;
+  energy?: number;
+  mood?: number;
+  intimacy?: number;
+  exp?: number;
+  level?: number;
+  createTime?: string;
+  updateTime?: string;
+}>({});
+
+/**
+ * 查看桌宠详情
+ */
+const handleDetail = async (row: any) => {
+  try {
+    const result = await getDesktopPetDetails(row.id);
+    if (result.code === 200) {
+      const data = result.data;
+      detailData.value = {
+        id: data.id,
+        userId: data.userId,
+        nickname: data.nickname,
+        energy: data.energy,
+        mood: data.mood,
+        intimacy: data.intimacy,
+        exp: data.exp,
+        level: data.level,
+        createTime: data.createTime,
+        updateTime: data.updateTime
+      };
+      detailDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取详情失败");
+  }
+};
 
 /**
  * 搜索列
@@ -215,7 +266,7 @@ const {
   tableRef,
   multipleSelection,
   handleSelectionChange
-} = useColumns(searchParams);
+} = useColumns(searchParams, handleDetail);
 
 onActivated(() => {
   console.log("桌宠管理 - onActivated 触发");
@@ -286,6 +337,27 @@ watch(
           @selection-change="handleSelectionChange"
         />
       </div>
+
+      <!-- 桌宠详情对话框 -->
+      <el-dialog
+        v-model="detailDialogVisible"
+        title="桌宠详情"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <Details
+          :id="detailData.id"
+          :user-id="detailData.userId"
+          :nickname="detailData.nickname"
+          :energy="detailData.energy"
+          :mood="detailData.mood"
+          :intimacy="detailData.intimacy"
+          :exp="detailData.exp"
+          :level="detailData.level"
+          :create-time="detailData.createTime"
+          :update-time="detailData.updateTime"
+        />
+      </el-dialog>
     </div>
   </div>
 </template>
