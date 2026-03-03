@@ -11,11 +11,13 @@ import {
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import Details from "./components/Details.vue";
+import UserDetails from "../user-management/components/Details.vue";
 import {
   exportDesktopPet,
   getDesktopPetDetails,
   type DesktopPetQuery
 } from "@/api/desktop-pet";
+import { getUserDetails } from "@/api/user";
 import { usePermissionStoreHook } from "@/store/modules/permission";
 import { useRoute } from "vue-router";
 
@@ -94,6 +96,54 @@ const handleDetail = async (row: any) => {
     }
   } catch (error) {
     ElMessage.error("获取详情失败");
+  }
+};
+
+/**
+ * 用户详情对话框状态
+ */
+const userDetailDialogVisible = ref(false);
+const userDetailData = ref<{
+  id?: number;
+  account?: string;
+  passwordHash?: string;
+  nickname?: string;
+  avatar?: string;
+  gender?: string;
+  birth?: string;
+  status?: string;
+  type?: string;
+  createTime?: string;
+  updateTime?: string;
+}>({});
+
+/**
+ * 查看用户详情
+ */
+const handleUserDetail = async (userId: number) => {
+  try {
+    const result = await getUserDetails(userId);
+    if (result.code === 200) {
+      const data = result.data;
+      userDetailData.value = {
+        id: data.id,
+        account: data.account,
+        passwordHash: data.passwordHash,
+        nickname: data.nickname,
+        avatar: data.avatar,
+        gender: data.gender,
+        birth: data.birth,
+        status: data.status,
+        type: data.type,
+        createTime: data.createTime,
+        updateTime: data.updateTime
+      };
+      userDetailDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取用户详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取用户详情失败");
   }
 };
 
@@ -266,7 +316,7 @@ const {
   tableRef,
   multipleSelection,
   handleSelectionChange
-} = useColumns(searchParams, handleDetail);
+} = useColumns(searchParams, handleDetail, handleUserDetail);
 
 onActivated(() => {
   console.log("桌宠管理 - onActivated 触发");
@@ -356,6 +406,28 @@ watch(
           :level="detailData.level"
           :create-time="detailData.createTime"
           :update-time="detailData.updateTime"
+        />
+      </el-dialog>
+
+      <!-- 用户详情对话框 -->
+      <el-dialog
+        v-model="userDetailDialogVisible"
+        title="用户详情"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <UserDetails
+          :id="userDetailData.id"
+          :account="userDetailData.account"
+          :password-hash="userDetailData.passwordHash"
+          :nickname="userDetailData.nickname"
+          :avatar="userDetailData.avatar"
+          :gender="userDetailData.gender"
+          :birth="userDetailData.birth"
+          :status="userDetailData.status"
+          :type="userDetailData.type"
+          :create-time="userDetailData.createTime"
+          :update-time="userDetailData.updateTime"
         />
       </el-dialog>
     </div>

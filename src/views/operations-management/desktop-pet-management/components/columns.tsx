@@ -13,7 +13,8 @@ const multipleSelection = ref<DesktopPetVO[]>([]);
 
 export function useColumns(
   searchParams?: Ref<DesktopPetQuery>,
-  onDetail?: (row: DesktopPetVO) => void
+  onDetail?: (row: DesktopPetVO) => void,
+  onUserDetail?: (userId: number) => void
 ) {
   const dataList = ref<DesktopPetVO[]>([]);
   const loading = ref(true);
@@ -25,7 +26,21 @@ export function useColumns(
     },
     {
       label: "用户ID",
-      prop: "userId"
+      prop: "userId",
+      cellRenderer: ({ row }) => {
+        return (
+          <el-link
+            type="primary"
+            onClick={() => {
+              if (onUserDetail && row.userId) {
+                onUserDetail(row.userId);
+              }
+            }}
+          >
+            {row.userId}
+          </el-link>
+        );
+      }
     },
     {
       label: "桌宠昵称",
