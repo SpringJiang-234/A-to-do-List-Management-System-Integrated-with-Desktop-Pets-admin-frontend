@@ -1,9 +1,5 @@
 import { ref, reactive, type Ref } from "vue";
-import type {
-  PaginationProps,
-  LoadingConfig,
-  TableColumnList
-} from "@pureadmin/table";
+import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
 import {
