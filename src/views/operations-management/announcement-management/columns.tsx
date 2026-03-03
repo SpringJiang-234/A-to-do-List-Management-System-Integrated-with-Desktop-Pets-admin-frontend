@@ -15,8 +15,8 @@ const multipleSelection = ref<AnnouncementVO[]>([]);
 
 export function useColumns(
   searchParams?: Ref<AnnouncementQuery>,
-  onEdit?: (row: AnnouncementVO) => void
-  // _onDetail?: (row: AnnouncementVO) => void
+  onEdit?: (row: AnnouncementVO) => void,
+  onDetail?: (row: AnnouncementVO) => void
 ) {
   const dataList = ref<AnnouncementVO[]>([]);
   const loading = ref(true);
@@ -58,19 +58,26 @@ export function useColumns(
     },
     {
       label: "操作",
-      cellRenderer: ({ index, row }) => (
+      cellRenderer: ({ row }) => (
         <>
           <el-button
             size="small"
+            type="primary"
+            onClick={() => handleDetail(row)}
+          >
+            详情
+          </el-button>
+          <el-button
+            size="small"
             type="warning"
-            onClick={() => handleEdit(index + 1, row)}
+            onClick={() => handleEdit(row)}
           >
             编辑
           </el-button>
           <el-button
             size="small"
             type="danger"
-            onClick={() => handleDelete(index + 1, row)}
+            onClick={() => handleDelete(row)}
           >
             删除
           </el-button>
@@ -145,13 +152,20 @@ export function useColumns(
     }
   }
 
-  const handleEdit = (index: number, row: AnnouncementVO) => {
+  /** 详情 */
+  const handleDetail = (row: AnnouncementVO) => {
+    if (onDetail) {
+      onDetail(row);
+    }
+  };
+
+  const handleEdit = (row: AnnouncementVO) => {
     if (onEdit) {
       onEdit(row);
     }
   };
 
-  const handleDelete = async (index: number, row: AnnouncementVO) => {
+  const handleDelete = async (row: AnnouncementVO) => {
     try {
       await ElMessageBox.confirm(
         `确定要删除公告"${row.title}"吗？`,

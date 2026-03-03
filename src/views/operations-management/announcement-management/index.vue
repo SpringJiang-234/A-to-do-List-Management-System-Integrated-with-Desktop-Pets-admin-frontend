@@ -12,6 +12,7 @@ import {
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
+import Details from "./components/Details.vue";
 import {
   insertAnnouncement,
   updateAnnouncement,
@@ -64,8 +65,33 @@ const formData = ref<FieldValues>({});
  * 编辑公告对话框状态
  */
 const editDialogVisible = ref(false);
-const editFormData = ref<FieldValues>({});
-const editId = ref<number | null>(null);
+const editData = ref<{
+  title: string;
+  content: string;
+  id: number;
+  isTop: number;
+}>({
+  title: "",
+  content: "",
+  id: 0,
+  isTop: 1
+});
+
+interface DetailsExpose {
+  title: string;
+  text: string;
+}
+
+const editDetailsRef = ref<DetailsExpose | null>(null);
+
+/**
+ * 详情公告对话框状态
+ */
+const detailDialogVisible = ref(false);
+const detailData = ref<{ title: string; content: string }>({
+  title: "",
+  content: ""
+});
 
 /**
  * 对话框表单列配置
@@ -265,14 +291,25 @@ const handleSubmit = async () => {
 };
 
 /**
+ * 查看公告详情
+ */
+const handleDetail = (row: any) => {
+  detailData.value = {
+    title: row.title,
+    content: row.content
+  };
+  detailDialogVisible.value = true;
+};
+
+/**
  * 编辑公告
  */
 const handleEdit = (row: any) => {
-  editId.value = row.id;
-  editFormData.value = {
+  editData.value = {
     title: row.title,
     content: row.content,
-    isTop: row.isTop
+    id: row.id,
+    isTop: row.isTop === "2" ? 2 : 1
   };
   editDialogVisible.value = true;
 };
@@ -282,10 +319,14 @@ const handleEdit = (row: any) => {
  */
 const handleEditSubmit = async () => {
   try {
+    const titleValue = editDetailsRef.value?.title || editData.value.title;
+    const contentValue = editDetailsRef.value?.text || editData.value.content;
+
     const data = {
-      ...editFormData.value,
-      id: editId.value,
-      isTop: editFormData.value.isTop === "2" ? 2 : 1
+      title: titleValue,
+      content: contentValue,
+      id: editData.value.id,
+      isTop: editData.value.isTop
     } as AnnouncementDTO;
     const result = await updateAnnouncement(data);
     if (result.code === 200) {
@@ -298,6 +339,13 @@ const handleEditSubmit = async () => {
   } catch (error) {
     ElMessage.error("编辑失败");
   }
+};
+
+/**
+ * 取消编辑公告
+ */
+const handleEditCancel = () => {
+  editDialogVisible.value = false;
 };
 
 /**
@@ -423,7 +471,7 @@ const {
   tableRef,
   multipleSelection,
   handleSelectionChange
-} = useColumns(searchParams, handleEdit);
+} = useColumns(searchParams, handleEdit, handleDetail);
 
 onActivated(() => {
   console.log("公告管理 - onActivated 触发");
@@ -505,13 +553,35 @@ watch(
       />
 
       <!-- 编辑公告对话框 -->
-      <PlusDialogForm
-        v-model:visible="editDialogVisible"
-        v-model="editFormData"
-        :dialog="{ title: '编辑公告' }"
-        :form="{ columns: dialogColumns }"
-        @confirm="handleEditSubmit"
-      />
+      <el-dialog
+        v-model="editDialogVisible"
+        title="编辑公告"
+        width="80%"
+        :close-on-click-modal="false"
+      >
+        <Details
+          ref="editDetailsRef"
+          :title="editData.title"
+          :content="editData.content"
+          mode="edit"
+          @confirm="handleEditSubmit"
+          @cancel="handleEditCancel"
+        />
+      </el-dialog>
+
+      <!-- 公告详情对话框 -->
+      <el-dialog
+        v-model="detailDialogVisible"
+        title="公告详情"
+        width="80%"
+        :close-on-click-modal="false"
+      >
+        <Details
+          :title="detailData.title"
+          :content="detailData.content"
+          mode="detail"
+        />
+      </el-dialog>
     </div>
   </div>
 </template>
