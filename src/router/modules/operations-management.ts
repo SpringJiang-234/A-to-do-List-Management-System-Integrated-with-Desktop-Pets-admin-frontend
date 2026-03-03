@@ -20,28 +20,12 @@ export default {
       }
     },
     {
-      path: "/operations-management/announcement-detail/:id",
-      name: "AnnouncementDetail",
-      meta: {
-        title: "公告详情",
-        showLink: false
-      }
-    },
-    {
       path: "/operations-management/feedback-management",
       name: "FeedbackManagement",
       component: () =>
         import("@/views/operations-management/feedback-management/index.vue"),
       meta: {
         title: "反馈管理"
-      }
-    },
-    {
-      path: "/operations-management/feedback-detail/:id",
-      name: "FeedbackDetail",
-      meta: {
-        title: "反馈详情",
-        showLink: false
       }
     },
     {
@@ -63,18 +47,6 @@ export default {
       meta: {
         title: "桌宠管理",
         keepAlive: true
-      }
-    },
-    {
-      path: "/operations-management/desktop-pet-detail/:id",
-      name: "DesktopPetDetail",
-      component: () =>
-        import(
-          "@/views/operations-management/desktop-pet-management/components/detail.vue"
-        ),
-      meta: {
-        title: "桌宠详情",
-        showLink: false
       }
     }
   ]

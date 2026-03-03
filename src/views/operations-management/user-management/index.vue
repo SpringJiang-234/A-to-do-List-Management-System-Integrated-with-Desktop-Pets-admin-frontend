@@ -12,6 +12,7 @@ import {
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
+import Details from "./components/Details.vue";
 import {
   insertUser,
   updateUser,
@@ -19,6 +20,7 @@ import {
   exportUser,
   importUser,
   downloadTemplate,
+  getUserDetails,
   type UserDTO,
   type UserQuery
 } from "@/api/user";
@@ -72,6 +74,24 @@ const formData = ref<FieldValues>({});
 const editDialogVisible = ref(false);
 const editFormData = ref<FieldValues>({});
 const editId = ref<number | null>(null);
+
+/**
+ * 详情对话框状态
+ */
+const detailDialogVisible = ref(false);
+const detailData = ref<{
+  id?: number;
+  account?: string;
+  passwordHash?: string;
+  nickname?: string;
+  avatar?: string;
+  gender?: string;
+  birth?: string;
+  status?: string;
+  type?: string;
+  createTime?: string;
+  updateTime?: string;
+}>({});
 
 /**
  * 对话框表单列配置
@@ -391,21 +411,61 @@ const handleSubmit = async () => {
 };
 
 /**
+ * 查看用户详情
+ */
+const handleDetail = async (row: any) => {
+  try {
+    const result = await getUserDetails(row.id);
+    if (result.code === 200) {
+      const data = result.data;
+      detailData.value = {
+        id: data.id,
+        account: data.account,
+        passwordHash: data.passwordHash,
+        nickname: data.nickname,
+        avatar: data.avatar,
+        gender: data.gender,
+        birth: data.birth,
+        status: data.status,
+        type: data.type,
+        createTime: data.createTime,
+        updateTime: data.updateTime
+      };
+      detailDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取详情失败");
+  }
+};
+
+/**
  * 编辑用户
  */
-const handleEdit = (row: any) => {
-  editId.value = row.id;
-  editFormData.value = {
-    account: row.account,
-    passwordHash: row.passwordHash,
-    nickname: row.nickname,
-    avatar: row.avatar,
-    gender: row.gender,
-    birth: row.birth,
-    status: row.status,
-    type: row.type
-  };
-  editDialogVisible.value = true;
+const handleEdit = async (row: any) => {
+  try {
+    const result = await getUserDetails(row.id);
+    if (result.code === 200) {
+      const data = result.data;
+      editId.value = data.id;
+      editFormData.value = {
+        account: data.account,
+        passwordHash: data.passwordHash,
+        nickname: data.nickname,
+        avatar: data.avatar,
+        gender: data.gender,
+        birth: data.birth,
+        status: data.status,
+        type: data.type
+      };
+      editDialogVisible.value = true;
+    } else {
+      ElMessage.error(result.msg || "获取详情失败");
+    }
+  } catch (error) {
+    ElMessage.error("获取详情失败");
+  }
 };
 
 /**
@@ -564,7 +624,7 @@ const {
   tableRef,
   multipleSelection,
   handleSelectionChange
-} = useColumns(searchParams, handleEdit);
+} = useColumns(searchParams, handleEdit, handleDetail);
 
 onActivated(() => {
   console.log("用户管理 - onActivated 触发");
@@ -659,6 +719,28 @@ onMounted(() => {
         :form="{ columns: dialogColumns }"
         @confirm="handleEditSubmit"
       />
+
+      <!-- 用户详情对话框 -->
+      <el-dialog
+        v-model="detailDialogVisible"
+        title="用户详情"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <Details
+          :id="detailData.id"
+          :account="detailData.account"
+          :password-hash="detailData.passwordHash"
+          :nickname="detailData.nickname"
+          :avatar="detailData.avatar"
+          :gender="detailData.gender"
+          :birth="detailData.birth"
+          :status="detailData.status"
+          :type="detailData.type"
+          :create-time="detailData.createTime"
+          :update-time="detailData.updateTime"
+        />
+      </el-dialog>
     </div>
   </div>
 </template>

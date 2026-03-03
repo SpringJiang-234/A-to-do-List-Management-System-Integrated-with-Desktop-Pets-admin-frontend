@@ -1,5 +1,4 @@
 import { ref, reactive, type Ref } from "vue";
-import { useDetail } from "./useDetail";
 import type { PaginationProps, LoadingConfig } from "@pureadmin/table";
 import { message } from "@/utils/message";
 import { ElMessageBox } from "element-plus";
@@ -19,7 +18,6 @@ export function useColumns(
   onDetail?: (row: UserVO) => void
 ) {
   const dataList = ref<UserVO[]>([]);
-  const { toDetail } = useDetail();
   const loading = ref(true);
   const columns: TableColumnList = [
     {
@@ -184,9 +182,6 @@ export function useColumns(
   const handleDetail = (index: number, row: UserVO) => {
     if (onDetail) {
       onDetail(row);
-    } else {
-      const id = row.id.toString();
-      toDetail({ id });
     }
   };
 
