@@ -37,7 +37,7 @@ dataThemeChange(overallStyle.value);
 const { title } = useNav();
 
 const ruleForm = reactive({
-  account: "winxp",
+  account: "admin",
   password: "123456abc"
 });
 

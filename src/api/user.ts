@@ -99,6 +99,11 @@ export const refreshTokenApi = (data: { refreshToken: string }) => {
   });
 };
 
+// 登出
+export const getLogout = () => {
+  return http.request<UserResult>("get", "/api/security/logout");
+};
+
 /* 用户管理API */
 
 // 新增用户
