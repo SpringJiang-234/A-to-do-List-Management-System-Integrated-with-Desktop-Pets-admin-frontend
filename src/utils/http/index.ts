@@ -69,6 +69,12 @@ class PureHttp {
           PureHttp.initConfig.beforeRequestCallback(config);
           return config;
         }
+
+        // 检查是否是 FormData 类型，如果是则移除 Content-Type 头，让 axios 自动设置
+        if (config.data instanceof FormData) {
+          delete config.headers["Content-Type"];
+        }
+
         /** 请求白名单，放置一些不需要`token`的接口（通过设置请求白名单，防止`token`过期后再请求造成的死循环问题） */
         const whiteList = ["/refresh-token", "/login"];
         return whiteList.some(url => config.url.endsWith(url))

@@ -155,10 +155,7 @@ export const importUser = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
   return http.request<UserResult>("post", "/api/user/import", {
-    data: formData,
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
+    data: formData
   });
 };
 
@@ -184,9 +181,6 @@ export const uploadAvatar = (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
   return http.request<UserResult>("post", "/api/user/uploadAvatar", {
-    data: formData,
-    headers: {
-      "Content-Type": "multipart/form-data"
-    }
+    data: formData
   });
 };

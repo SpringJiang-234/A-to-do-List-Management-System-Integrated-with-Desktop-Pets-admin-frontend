@@ -97,6 +97,63 @@ const handleAvatarError = () => {
 };
 
 /**
+ * 自定义头像上传处理
+ */
+const handleAvatarUpload = async (options: any) => {
+  try {
+    console.log("=== 开始上传头像 ===");
+    console.log("完整上传选项:", JSON.stringify(options, null, 2));
+
+    // 检查 options.file 的结构
+    const file = options.file;
+    console.log("文件对象:", file);
+    console.log("文件对象类型:", typeof file);
+    console.log("文件对象属性:", Object.keys(file));
+
+    // 尝试获取原始 File 对象
+    const actualFile = file.raw || file;
+    console.log("实际文件:", actualFile);
+    console.log("实际文件类型:", typeof actualFile);
+    console.log("是否为File对象:", actualFile instanceof File);
+
+    if (actualFile instanceof File) {
+      console.log("File对象信息:");
+      console.log("  名称:", actualFile.name);
+      console.log("  大小:", actualFile.size);
+      console.log("  类型:", actualFile.type);
+    } else {
+      console.warn("不是File对象:", actualFile);
+    }
+
+    // 测试 FormData 构建
+    const testFormData = new FormData();
+    testFormData.append("file", actualFile);
+    console.log("FormData 已创建");
+    console.log("FormData 条目数:", testFormData.entries().next().done ? 0 : 1);
+
+    // 调用上传函数
+    console.log("准备调用 uploadAvatar 函数");
+    const response = await uploadAvatar(actualFile);
+    console.log("上传响应:", response);
+
+    if (response.code === 200) {
+      console.log("上传成功");
+      options.onSuccess(response);
+    } else {
+      console.error("上传失败:", response.msg);
+      options.onError(new Error(response.msg || "上传失败"));
+    }
+  } catch (error) {
+    console.error("上传错误:", error);
+    console.error("错误详情:", error instanceof Error ? error.message : error);
+    console.error("错误堆栈:", error instanceof Error ? error.stack : null);
+    options.onError(error);
+  } finally {
+    console.log("=== 上传流程结束 ===");
+  }
+};
+
+/**
  * 搜索表单状态
  */
 const state = ref<FieldValues>({
@@ -712,8 +769,7 @@ onMounted(() => {
             <div class="avatar-upload-container">
               <el-upload
                 class="avatar-uploader"
-                :action="'/api/user/uploadAvatar'"
-                :headers="{ Authorization: 'Bearer ' + getToken() }"
+                :http-request="handleAvatarUpload"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
@@ -793,8 +849,7 @@ onMounted(() => {
             <div class="avatar-upload-container">
               <el-upload
                 class="avatar-uploader"
-                :action="'/api/user/uploadAvatar'"
-                :headers="{ Authorization: 'Bearer ' + getToken() }"
+                :http-request="handleAvatarUpload"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
