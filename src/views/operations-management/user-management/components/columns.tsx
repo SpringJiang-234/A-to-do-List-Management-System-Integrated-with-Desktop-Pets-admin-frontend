@@ -37,13 +37,16 @@ export function useColumns(
       label: "头像",
       prop: "avatar",
       cellRenderer: ({ row }) => {
-        return row.avatar ? (
+        if (!row.avatar) {
+          return "无";
+        }
+        // 去除URL中的签名部分，使用基础URL
+        const baseUrl = row.avatar.split("?")[0];
+        return (
           <img
-            src={row.avatar}
+            src={baseUrl}
             style={{ width: "40px", height: "40px", borderRadius: "50%" }}
           />
-        ) : (
-          "无"
         );
       }
     },

@@ -41,7 +41,7 @@ const formatTime = (time?: string) => {
     <el-descriptions-item label="头像">
       <el-image
         v-if="avatar"
-        :src="avatar"
+        :src="avatar.split('?')[0]"
         style="width: 60px; height: 60px; border-radius: 50%"
         fit="cover"
       />
