@@ -60,6 +60,14 @@ console.log("用户管理 - 组件 setup 开始执行");
  * 头像上传成功处理
  */
 const handleAvatarSuccess = async (response: any, uploadFile: any) => {
+  console.log("头像上传成功回调:", response);
+
+  // 如果响应为空或已经处理过，则不处理
+  if (!response || response === undefined) {
+    console.log("忽略空响应或重复调用");
+    return;
+  }
+
   if (response.code === 200) {
     // 根据当前打开的对话框，更新对应表单的avatar字段
     if (dialogVisible.value) {
@@ -129,25 +137,35 @@ const handleAvatarUpload = async (options: any) => {
     const testFormData = new FormData();
     testFormData.append("file", actualFile);
     console.log("FormData 已创建");
-    console.log("FormData 条目数:", testFormData.entries().next().done ? 0 : 1);
 
     // 调用上传函数
     console.log("准备调用 uploadAvatar 函数");
     const response = await uploadAvatar(actualFile);
     console.log("上传响应:", response);
 
+    // 检查响应是否存在
+    if (!response) {
+      ElMessage.error("服务器未返回响应");
+      return;
+    }
+
+    // 处理响应
     if (response.code === 200) {
-      console.log("上传成功");
-      options.onSuccess(response);
+      // 根据当前打开的对话框，更新对应表单的avatar字段
+      if (dialogVisible.value) {
+        formData.value.avatar = response.data;
+      } else if (editDialogVisible.value) {
+        editFormData.value.avatar = response.data;
+      }
+      ElMessage.success("头像上传成功");
     } else {
-      console.error("上传失败:", response.msg);
-      options.onError(new Error(response.msg || "上传失败"));
+      ElMessage.error(response.msg || "头像上传失败");
     }
   } catch (error) {
     console.error("上传错误:", error);
     console.error("错误详情:", error instanceof Error ? error.message : error);
     console.error("错误堆栈:", error instanceof Error ? error.stack : null);
-    options.onError(error);
+    ElMessage.error("头像上传失败，请重试");
   } finally {
     console.log("=== 上传流程结束 ===");
   }
@@ -771,9 +789,7 @@ onMounted(() => {
                 class="avatar-uploader"
                 :http-request="handleAvatarUpload"
                 :show-file-list="false"
-                :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload"
-                :on-error="handleAvatarError"
               >
                 <img
                   v-if="formData.avatar"
