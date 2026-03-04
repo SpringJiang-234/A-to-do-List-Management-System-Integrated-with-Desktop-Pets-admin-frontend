@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useColumns } from "./components/columns";
 import { ref, onActivated, onDeactivated, watch, onMounted } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox, ElUpload, ElIcon } from "element-plus";
+import "element-plus/dist/index.css";
 import "plus-pro-components/es/components/form/style/css";
 import "plus-pro-components/es/components/dialog-form/style/css";
 import {
@@ -10,6 +11,19 @@ import {
   PlusSearch,
   PlusDialogForm
 } from "plus-pro-components";
+
+// 定义用户表单数据类型
+interface UserFormData {
+  account: string;
+  passwordHash: string;
+  nickname: string;
+  avatar: string;
+  gender: string;
+  birth: string | undefined;
+  status: string;
+  type: string;
+}
+import { Plus } from "@element-plus/icons-vue";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
 import Details from "./components/Details.vue";
@@ -21,10 +35,18 @@ import {
   downloadTemplate,
   getUserDetails,
   batchCancelUser,
+  uploadAvatar,
   type UserDTO,
   type UserQuery
 } from "@/api/user";
 import { useRoute } from "vue-router";
+import { getToken as getAuthToken } from "@/utils/auth";
+
+// 获取token的函数
+const getToken = (): string => {
+  const tokenData = getAuthToken();
+  return tokenData?.accessToken || "";
+};
 
 defineOptions({
   name: "UserManagement"
@@ -33,6 +55,46 @@ defineOptions({
 const route = useRoute();
 
 console.log("用户管理 - 组件 setup 开始执行");
+
+/**
+ * 头像上传成功处理
+ */
+const handleAvatarSuccess = async (response: any, uploadFile: any) => {
+  if (response.code === 200) {
+    // 根据当前打开的对话框，更新对应表单的avatar字段
+    if (dialogVisible.value) {
+      formData.value.avatar = response.data;
+    } else if (editDialogVisible.value) {
+      editFormData.value.avatar = response.data;
+    }
+    ElMessage.success("头像上传成功");
+  } else {
+    ElMessage.error(response.msg || "头像上传失败");
+  }
+};
+
+/**
+ * 头像上传前验证
+ */
+const beforeAvatarUpload = (file: File) => {
+  const isJPG = file.type === "image/jpeg" || file.type === "image/png";
+  const isLt2M = file.size / 1024 / 1024 < 2;
+
+  if (!isJPG) {
+    ElMessage.error("只能上传JPG/PNG图片!");
+  }
+  if (!isLt2M) {
+    ElMessage.error("图片大小不能超过2MB!");
+  }
+  return isJPG && isLt2M;
+};
+
+/**
+ * 头像上传失败处理
+ */
+const handleAvatarError = () => {
+  ElMessage.error("头像上传失败，请重试");
+};
 
 /**
  * 搜索表单状态
@@ -66,13 +128,31 @@ const searchParams = ref<UserQuery>({
  * 新增用户对话框状态
  */
 const dialogVisible = ref(false);
-const formData = ref<FieldValues>({});
+const formData = ref<UserFormData>({
+  account: "",
+  passwordHash: "",
+  nickname: "",
+  avatar: "",
+  gender: "3",
+  birth: undefined,
+  status: "1",
+  type: "2"
+});
 
 /**
  * 编辑用户对话框状态
  */
 const editDialogVisible = ref(false);
-const editFormData = ref<FieldValues>({});
+const editFormData = ref<UserFormData>({
+  account: "",
+  passwordHash: "",
+  nickname: "",
+  avatar: "",
+  gender: "3",
+  birth: undefined,
+  status: "1",
+  type: "2"
+});
 const editId = ref<number | null>(null);
 
 /**
@@ -94,110 +174,8 @@ const detailData = ref<{
 }>({});
 
 /**
- * 对话框表单列配置
+ * 对话框表单配置已移除，使用原生el-form代替
  */
-const dialogColumns: PlusColumn[] = [
-  {
-    label: "邮箱",
-    prop: "account",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入邮箱"
-    }
-  },
-  {
-    label: "密码",
-    prop: "passwordHash",
-    valueType: "copy",
-    fieldProps: {
-      type: "password",
-      placeholder: "请输入密码"
-    }
-  },
-  {
-    label: "昵称",
-    prop: "nickname",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入昵称"
-    }
-  },
-  {
-    label: "头像",
-    prop: "avatar",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入头像URL"
-    }
-  },
-  {
-    label: "性别",
-    prop: "gender",
-    valueType: "select",
-    fieldProps: {
-      placeholder: "请选择性别"
-    },
-    options: [
-      {
-        label: "男",
-        value: "1"
-      },
-      {
-        label: "女",
-        value: "2"
-      },
-      {
-        label: "未知",
-        value: "3"
-      }
-    ]
-  },
-  {
-    label: "生日",
-    prop: "birth",
-    valueType: "date-picker",
-    fieldProps: {
-      type: "date",
-      placeholder: "请选择生日"
-    }
-  },
-  {
-    label: "状态",
-    prop: "status",
-    valueType: "select",
-    fieldProps: {
-      placeholder: "请选择状态"
-    },
-    options: [
-      {
-        label: "正常",
-        value: "1"
-      },
-      {
-        label: "已注销",
-        value: "2"
-      }
-    ]
-  },
-  {
-    label: "类型",
-    prop: "type",
-    valueType: "select",
-    fieldProps: {
-      placeholder: "请选择类型"
-    },
-    options: [
-      {
-        label: "管理员",
-        value: "1"
-      },
-      {
-        label: "普通用户",
-        value: "2"
-      }
-    ]
-  }
-];
 
 /**
  * 搜索列
@@ -368,6 +346,7 @@ const handleRest = () => {
  * 新增用户
  */
 const handleAdd = () => {
+  // 重置表单数据
   formData.value = {
     account: "",
     passwordHash: "",
@@ -449,15 +428,20 @@ const handleEdit = async (row: any) => {
     if (result.code === 200) {
       const data = result.data;
       editId.value = data.id;
+      // 映射字符串值到数字
+      const genderMap: Record<string, string> = { 男: "1", 女: "2", 未知: "3" };
+      const statusMap: Record<string, string> = { 正常: "1", 已注销: "2" };
+      const typeMap: Record<string, string> = { 管理员: "1", 普通用户: "2" };
+
       editFormData.value = {
         account: data.account,
         passwordHash: data.passwordHash,
         nickname: data.nickname,
         avatar: data.avatar,
-        gender: data.gender,
+        gender: genderMap[data.gender || "未知"] || "3",
         birth: data.birth,
-        status: data.status,
-        type: data.type
+        status: statusMap[data.status || "正常"] || "1",
+        type: typeMap[data.type || "普通用户"] || "2"
       };
       editDialogVisible.value = true;
     } else {
@@ -704,22 +688,163 @@ onMounted(() => {
       </div>
 
       <!-- 新增用户对话框 -->
-      <PlusDialogForm
-        v-model:visible="dialogVisible"
-        v-model="formData"
-        :dialog="{ title: '新增用户' }"
-        :form="{ columns: dialogColumns }"
-        @confirm="handleSubmit"
-      />
+      <el-dialog
+        v-model="dialogVisible"
+        title="新增用户"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <el-form :model="formData" label-width="80px">
+          <el-form-item label="邮箱" prop="account">
+            <el-input v-model="formData.account" placeholder="请输入邮箱" />
+          </el-form-item>
+          <el-form-item label="密码" prop="passwordHash">
+            <el-input
+              v-model="formData.passwordHash"
+              type="password"
+              placeholder="请输入密码"
+            />
+          </el-form-item>
+          <el-form-item label="昵称" prop="nickname">
+            <el-input v-model="formData.nickname" placeholder="请输入昵称" />
+          </el-form-item>
+          <el-form-item label="头像">
+            <div class="avatar-upload-container">
+              <el-upload
+                class="avatar-uploader"
+                :action="'/api/user/uploadAvatar'"
+                :headers="{ Authorization: 'Bearer ' + getToken() }"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+                :on-error="handleAvatarError"
+              >
+                <img
+                  v-if="formData.avatar"
+                  :src="formData.avatar"
+                  class="avatar"
+                />
+                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+              </el-upload>
+              <div class="avatar-tip">支持 JPG、PNG 格式，大小不超过 2MB</div>
+            </div>
+          </el-form-item>
+          <el-form-item label="性别">
+            <el-select v-model="formData.gender" placeholder="请选择性别">
+              <el-option label="男" value="1" />
+              <el-option label="女" value="2" />
+              <el-option label="未知" value="3" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="生日">
+            <el-date-picker
+              v-model="formData.birth"
+              type="date"
+              placeholder="请选择生日"
+              style="width: 100%"
+            />
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select v-model="formData.status" placeholder="请选择状态">
+              <el-option label="正常" value="1" />
+              <el-option label="已注销" value="2" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="类型">
+            <el-select v-model="formData.type" placeholder="请选择类型">
+              <el-option label="管理员" value="1" />
+              <el-option label="普通用户" value="2" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="dialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleSubmit">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
 
       <!-- 编辑用户对话框 -->
-      <PlusDialogForm
-        v-model:visible="editDialogVisible"
-        v-model="editFormData"
-        :dialog="{ title: '编辑用户' }"
-        :form="{ columns: dialogColumns }"
-        @confirm="handleEditSubmit"
-      />
+      <el-dialog
+        v-model="editDialogVisible"
+        title="编辑用户"
+        width="600px"
+        :close-on-click-modal="false"
+      >
+        <el-form :model="editFormData" label-width="80px">
+          <el-form-item label="邮箱" prop="account">
+            <el-input v-model="editFormData.account" placeholder="请输入邮箱" />
+          </el-form-item>
+          <el-form-item label="密码" prop="passwordHash">
+            <el-input
+              v-model="editFormData.passwordHash"
+              type="password"
+              placeholder="请输入密码"
+            />
+          </el-form-item>
+          <el-form-item label="昵称" prop="nickname">
+            <el-input
+              v-model="editFormData.nickname"
+              placeholder="请输入昵称"
+            />
+          </el-form-item>
+          <el-form-item label="头像">
+            <div class="avatar-upload-container">
+              <el-upload
+                class="avatar-uploader"
+                :action="'/api/user/uploadAvatar'"
+                :headers="{ Authorization: 'Bearer ' + getToken() }"
+                :show-file-list="false"
+                :on-success="handleAvatarSuccess"
+                :before-upload="beforeAvatarUpload"
+                :on-error="handleAvatarError"
+              >
+                <img
+                  v-if="editFormData.avatar"
+                  :src="editFormData.avatar"
+                  class="avatar"
+                />
+                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+              </el-upload>
+              <div class="avatar-tip">支持 JPG、PNG 格式，大小不超过 2MB</div>
+            </div>
+          </el-form-item>
+          <el-form-item label="性别">
+            <el-select v-model="editFormData.gender" placeholder="请选择性别">
+              <el-option label="男" value="1" />
+              <el-option label="女" value="2" />
+              <el-option label="未知" value="3" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="生日">
+            <el-date-picker
+              v-model="editFormData.birth"
+              type="date"
+              placeholder="请选择生日"
+              style="width: 100%"
+            />
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select v-model="editFormData.status" placeholder="请选择状态">
+              <el-option label="正常" value="1" />
+              <el-option label="已注销" value="2" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="类型">
+            <el-select v-model="editFormData.type" placeholder="请选择类型">
+              <el-option label="管理员" value="1" />
+              <el-option label="普通用户" value="2" />
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="editDialogVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleEditSubmit">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
 
       <!-- 用户详情对话框 -->
       <el-dialog
@@ -753,5 +878,47 @@ onMounted(() => {
 
 .user-container :deep(.plus-search__unfold) {
   margin-left: 20px !important;
+}
+
+.avatar-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.avatar-uploader .avatar {
+  display: block;
+  width: 178px;
+  height: 178px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.avatar-uploader .el-upload {
+  position: relative;
+  margin-bottom: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  width: 178px;
+  height: 178px;
+  font-size: 28px;
+  line-height: 178px;
+  color: #8c939d;
+  text-align: center;
+}
+
+.avatar-tip {
+  font-size: 12px;
+  color: #909399;
 }
 </style>

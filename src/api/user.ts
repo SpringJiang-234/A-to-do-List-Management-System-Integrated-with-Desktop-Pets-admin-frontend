@@ -178,3 +178,15 @@ export const cancelUser = (id: number) => {
 export const batchCancelUser = (ids: string) => {
   return http.request<UserResult>("get", `/api/user/batchCancel/${ids}`);
 };
+
+// 上传用户头像
+export const uploadAvatar = (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return http.request<UserResult>("post", "/api/user/uploadAvatar", {
+    data: formData,
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+};
