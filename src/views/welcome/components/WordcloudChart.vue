@@ -6,14 +6,21 @@
 import { computed } from "vue";
 import BaseChart from "./BaseChart.vue";
 import type { ECOption } from "@/utils/echarts";
+import { getSeriesColors, ThemeType } from "./color";
+import { useEpThemeStoreHook } from "@/store/modules/epTheme";
 
 const props = defineProps<{
   data: Array<{ name: string; value: number }>;
   title?: string;
-  shape?: string; // 形状，可选 'circle', 'cardioid', 'diamond' 等
+  shape?: string;
   width?: string;
   height?: string;
 }>();
+
+const epThemeStore = useEpThemeStoreHook();
+const currentTheme = computed<ThemeType>(() => {
+  return epThemeStore.epTheme as ThemeType;
+});
 
 const chartOptions = computed<ECOption>(() => ({
   title: props.title ? { text: props.title, left: "center" } : undefined,
@@ -21,24 +28,17 @@ const chartOptions = computed<ECOption>(() => ({
   series: [
     {
       type: "wordCloud",
-      data: props.data,
-      shape: props.shape || "circle",
-      sizeRange: [12, 60], // 字体大小范围
-      rotationRange: [0, 0], // 旋转范围，设为 [0,0] 不旋转
-      textStyle: {
-        color: () => {
-          // 随机颜色
-          return (
-            "rgb(" +
-            [
-              Math.round(Math.random() * 160),
-              Math.round(Math.random() * 160),
-              Math.round(Math.random() * 160)
-            ].join(",") +
-            ")"
-          );
+      data: props.data.map((item, index) => ({
+        ...item,
+        textStyle: {
+          color: getSeriesColors(currentTheme.value)[
+            index % getSeriesColors(currentTheme.value).length
+          ]
         }
-      },
+      })),
+      shape: props.shape || "circle",
+      sizeRange: [12, 60],
+      rotationRange: [0, 0],
       emphasis: {
         textStyle: {
           fontWeight: "bold",

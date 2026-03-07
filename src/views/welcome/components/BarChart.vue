@@ -6,6 +6,8 @@
 import { computed } from "vue";
 import BaseChart from "./BaseChart.vue";
 import type { ECOption } from "@/utils/echarts";
+import { getSeriesColor, ThemeType } from "./color";
+import { useEpThemeStoreHook } from "@/store/modules/epTheme";
 
 const props = defineProps<{
   data: Array<{ category: string; value: number }>;
@@ -13,6 +15,11 @@ const props = defineProps<{
   width?: string;
   height?: string;
 }>();
+
+const epThemeStore = useEpThemeStoreHook();
+const currentTheme = computed<ThemeType>(() => {
+  return epThemeStore.epTheme as ThemeType;
+});
 
 const chartOptions = computed<ECOption>(() => {
   if (!props.data || props.data.length === 0) {
@@ -43,7 +50,12 @@ const chartOptions = computed<ECOption>(() => {
       {
         name: props.title || "柱状图",
         type: "bar",
-        data: props.data.map(item => item.value),
+        data: props.data.map((item, index) => ({
+          value: item.value,
+          itemStyle: {
+            color: getSeriesColor(currentTheme.value, index)
+          }
+        })),
         barWidth: "60%"
       }
     ],
