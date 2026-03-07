@@ -13,29 +13,37 @@ const props = defineProps<{
   title?: string;
   width?: string;
   height?: string;
+  backgroundColor?: string;
 }>();
 
 const chartOptions = computed<ECOption>(() => {
-  // 自动计算日期范围
+  const currentYear = new Date().getFullYear();
+  const yearStart = `${currentYear}-01-01`;
+  const yearEnd = `${currentYear}-12-31`;
+
   const dates = props.data.map(item => item[0]);
-  const minDate = dates.length ? dates.reduce((a, b) => (a < b ? a : b)) : "";
-  const maxDate = dates.length ? dates.reduce((a, b) => (a > b ? a : b)) : "";
+  const minDate = dates.length
+    ? dates.reduce((a, b) => (a < b ? a : b))
+    : yearStart;
+  const maxDate = dates.length
+    ? dates.reduce((a, b) => (a > b ? a : b))
+    : yearEnd;
 
   return {
     title: props.title ? { text: props.title, left: "center" } : undefined,
     tooltip: {},
     visualMap: {
       min: 0,
-      max: Math.max(...props.data.map(item => item[1])),
+      max: Math.max(...props.data.map(item => item[1]), 1),
       calculable: true,
       orient: "horizontal",
       left: "center",
       inRange: {
-        color: ["#ebedf0", "#c6e48b", "#7bc96f", "#239a3b", "#196127"]
+        color: ["#ffffff", "#c6e48b", "#7bc96f", "#239a3b", "#196127"]
       }
     },
     calendar: {
-      range: props.range || [minDate, maxDate],
+      range: props.range || [yearStart, yearEnd],
       cellSize: ["auto", 20]
     },
     series: [
@@ -45,7 +53,8 @@ const chartOptions = computed<ECOption>(() => {
         coordinateSystem: "calendar",
         data: props.data
       }
-    ]
+    ],
+    backgroundColor: props.backgroundColor
   };
 });
 </script>

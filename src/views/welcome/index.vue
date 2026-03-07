@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import LineChart from "./components/LineChart.vue";
 import PieChart from "./components/PieChart.vue";
+import CalendarHeatmap from "./components/CalendarHeatmap.vue";
 
 import {
   getTotalUsers,
@@ -190,6 +191,35 @@ const userGenderChartData = computed(() => {
     value: item.count
   }));
 });
+
+const userBirthMonthChartData = computed(() => {
+  return userBirthMonthDistribution.value.map((item: any) => ({
+    name: `${item.month}月`,
+    value: item.count
+  }));
+});
+
+const userRegistrationHeatmapData = computed(() => {
+  const currentYear = new Date().getFullYear();
+  const startDate = new Date(currentYear, 0, 1);
+  const endDate = new Date(currentYear, 11, 31);
+
+  const dataMap = new Map<string, number>();
+  userRegistrationHeatmap.value.forEach((item: any) => {
+    dataMap.set(item.date, item.count);
+  });
+
+  const result: [string, number][] = [];
+  const currentDate = new Date(startDate);
+
+  while (currentDate <= endDate) {
+    const dateStr = currentDate.toISOString().split("T")[0];
+    result.push([dateStr, dataMap.get(dateStr) || 0]);
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return result;
+});
 </script>
 
 <template>
@@ -213,6 +243,17 @@ const userGenderChartData = computed(() => {
         :data="userGenderChartData"
         title="用户性别分布"
         height="400px"
+      />
+      <PieChart
+        :data="userBirthMonthChartData"
+        title="用户生日月份分布"
+        height="400px"
+      />
+      <CalendarHeatmap
+        :data="userRegistrationHeatmapData"
+        title="用户注册时间热力图"
+        height="400px"
+        backgroundColor="transparent"
       />
     </el-card>
   </div>
