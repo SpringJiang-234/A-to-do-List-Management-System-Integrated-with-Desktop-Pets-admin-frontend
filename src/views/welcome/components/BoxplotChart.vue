@@ -18,21 +18,39 @@ const props = defineProps<{
   height?: string;
 }>();
 
-const chartOptions = computed<ECOption>(() => ({
-  title: props.title ? { text: props.title, left: "center" } : undefined,
-  tooltip: { trigger: "item" },
-  xAxis: {
-    type: "category",
-    data: props.data.map(item => item.category)
-  },
-  yAxis: { type: "value" },
-  series: [
-    {
-      name: props.title || "箱型图",
-      type: "boxplot",
-      data: props.data.map(item => item.values)
-    }
-  ],
-  grid: { containLabel: true }
-}));
+const chartOptions = computed<ECOption>(() => {
+  if (!props.data || props.data.length === 0) {
+    return {
+      title: props.title ? { text: props.title, left: "center" } : undefined,
+      graphic: {
+        type: "text",
+        left: "center",
+        top: "center",
+        style: {
+          text: "暂无数据",
+          fontSize: 16,
+          fill: "#999"
+        }
+      }
+    };
+  }
+
+  return {
+    title: props.title ? { text: props.title, left: "center" } : undefined,
+    tooltip: { trigger: "item" },
+    xAxis: {
+      type: "category",
+      data: props.data.map(item => item.category)
+    },
+    yAxis: { type: "value" },
+    series: [
+      {
+        name: props.title || "箱型图",
+        type: "boxplot",
+        data: props.data.map(item => item.values)
+      }
+    ],
+    grid: { containLabel: true }
+  };
+});
 </script>

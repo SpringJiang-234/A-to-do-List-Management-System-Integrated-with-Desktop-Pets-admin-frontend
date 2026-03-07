@@ -3,18 +3,18 @@ import { ref, onMounted, computed } from "vue";
 import LineChart from "./components/LineChart.vue";
 import PieChart from "./components/PieChart.vue";
 import CalendarHeatmap from "./components/CalendarHeatmap.vue";
+import WordcloudChart from "./components/WordcloudChart.vue";
+import BarChart from "./components/BarChart.vue";
+import BarChartHorizontal from "./components/BarChartHorizontal.vue";
+import BoxplotChart from "./components/BoxplotChart.vue";
 
 import {
-  getTotalUsers,
-  getNewUsersByDate,
   getUserStatusDistribution,
   getUserGenderDistribution,
   getUserBirthMonthDistribution,
   getUserRegistrationHeatmap,
   getDailyNewUsers,
   getDailyTotalUsers,
-  getTotalTodos,
-  getNewTodosByDate,
   getTodoStatusDistribution,
   getTodoPriorityDistribution,
   getDailyNewTodos,
@@ -34,8 +34,6 @@ import {
 
 const loading = ref(false);
 
-const totalUsers = ref(0);
-const newUsersByDate = ref(0);
 const userStatusDistribution = ref([]);
 const userGenderDistribution = ref([]);
 const userBirthMonthDistribution = ref([]);
@@ -45,8 +43,6 @@ const dailyTotalUsers = ref([]);
 const dailyNewUsersDate = ref([]);
 const dailyTotalUsersDate = ref([]);
 
-const totalTodos = ref(0);
-const newTodosByDate = ref(0);
 const todoStatusDistribution = ref([]);
 const todoPriorityDistribution = ref([]);
 const dailyNewTodos = ref([]);
@@ -73,8 +69,6 @@ const fetchAllData = async () => {
       .toISOString()
       .split("T")[0];
 
-    const totalUsersRes = await getTotalUsers();
-    const newUsersRes = await getNewUsersByDate(today);
     const userStatusRes = await getUserStatusDistribution();
     const userGenderRes = await getUserGenderDistribution();
     const userBirthMonthRes = await getUserBirthMonthDistribution();
@@ -84,8 +78,6 @@ const fetchAllData = async () => {
     );
     const dailyNewUsersRes = await getDailyNewUsers(thirtyDaysAgo, today);
     const dailyTotalUsersRes = await getDailyTotalUsers(thirtyDaysAgo, today);
-    const totalTodosRes = await getTotalTodos();
-    const newTodosRes = await getNewTodosByDate(today);
     const todoStatusRes = await getTodoStatusDistribution();
     const todoPriorityRes = await getTodoPriorityDistribution();
     const dailyNewTodosRes = await getDailyNewTodos(thirtyDaysAgo, today);
@@ -108,8 +100,6 @@ const fetchAllData = async () => {
     );
     const announcementRes = await getAnnouncementTopRatio();
 
-    totalUsers.value = totalUsersRes.data;
-    newUsersByDate.value = newUsersRes.data;
     userStatusDistribution.value = userStatusRes.data;
     userGenderDistribution.value = userGenderRes.data;
     userBirthMonthDistribution.value = userBirthMonthRes.data;
@@ -124,8 +114,6 @@ const fetchAllData = async () => {
       (item: any) => item.date
     );
 
-    totalTodos.value = totalTodosRes.data;
-    newTodosByDate.value = newTodosRes.data;
     todoStatusDistribution.value = todoStatusRes.data;
     todoPriorityDistribution.value = todoPriorityRes.data;
     dailyNewTodos.value = dailyNewTodosRes.data;
@@ -220,13 +208,105 @@ const userRegistrationHeatmapData = computed(() => {
 
   return result;
 });
+
+const todoStatusChartData = computed(() => {
+  const statusMap: Record<number, string> = {
+    0: "未开始",
+    1: "进行中",
+    2: "已完成",
+    3: "已取消"
+  };
+  return todoStatusDistribution.value.map((item: any) => ({
+    name: statusMap[item.status] || item.status,
+    value: item.count
+  }));
+});
+
+const todoPriorityChartData = computed(() => {
+  const priorityMap: Record<number, string> = {
+    0: "无优先级",
+    1: "低",
+    2: "中",
+    3: "高"
+  };
+  return todoPriorityDistribution.value.map((item: any) => ({
+    name: priorityMap[item.priority] || item.priority,
+    value: item.count
+  }));
+});
+
+const todoTrendData = computed(() => {
+  const xAxisData = dailyNewTodos.value.map((item: any) => item.date);
+  const series = [
+    {
+      name: "每日新增待办",
+      data: dailyNewTodos.value.map((item: any) => item.count)
+    }
+  ];
+  return { xAxisData, series };
+});
+
+const todoCompletionRateData = computed(() => {
+  const xAxisData = todoCompletionRateTrend.value.map((item: any) => item.date);
+  const series = [
+    {
+      name: "完成率",
+      data: todoCompletionRateTrend.value.map(
+        (item: any) => item.completionRate
+      )
+    }
+  ];
+  return { xAxisData, series };
+});
+
+const todoTagCloudData = computed(() => {
+  return todoTagFrequency.value.map((item: any) => ({
+    name: item.tagName,
+    value: item.frequency
+  }));
+});
+
+const petLevelChartData = computed(() => {
+  return petLevelDistribution.value.map((item: any) => ({
+    category: `${item.levelRangeStart}-${item.levelRangeEnd}级`,
+    value: item.count
+  }));
+});
+
+const petEnergyChartData = computed(() => {
+  return petEnergyDistribution.value.map((item: any) => ({
+    category: item.energy.toString(),
+    value: item.count
+  }));
+});
+
+const petMoodChartData = computed(() => {
+  return petMoodDistribution.value.map((item: any) => ({
+    category: item.mood.toString(),
+    value: item.count
+  }));
+});
+
+const petIntimacyChartData = computed(() => {
+  return petIntimacyDistribution.value.map((item: any) => ({
+    category: item.intimacy.toString(),
+    value: item.count
+  }));
+});
+
+const topLevelPetsData = computed(() => {
+  return topLevelPets.value.map((item: any) => ({
+    category: item.petNickname,
+    value: item.petLevel
+  }));
+});
 </script>
 
 <template>
   <div>
     <el-card shadow="never">
       <template #header>
-        <span>用户统计</span>
+        <h3>用户统计</h3>
       </template>
       <LineChart
         :xAxisData="userTrendData.xAxisData"
@@ -254,6 +334,66 @@ const userRegistrationHeatmapData = computed(() => {
         title="用户注册时间热力图"
         height="400px"
         backgroundColor="transparent"
+      />
+    </el-card>
+
+    <el-card shadow="never">
+      <template #header>
+        <h3>桌宠统计</h3>
+      </template>
+      <BarChart :data="petLevelChartData" title="桌宠等级分布" height="400px" />
+      <BarChart
+        :data="petEnergyChartData"
+        title="桌宠活力值分布"
+        height="400px"
+      />
+      <BarChart
+        :data="petMoodChartData"
+        title="桌宠心情值分布"
+        height="400px"
+      />
+      <BarChart
+        :data="petIntimacyChartData"
+        title="桌宠亲密度分布"
+        height="400px"
+      />
+      <BarChartHorizontal
+        :data="topLevelPetsData"
+        title="桌宠最高等级排行"
+        height="400px"
+      />
+    </el-card>
+
+    <el-card shadow="never">
+      <template #header>
+        <h3>待办事项统计</h3>
+      </template>
+      <PieChart
+        :data="todoStatusChartData"
+        title="待办事项状态分布"
+        height="400px"
+      />
+      <PieChart
+        :data="todoPriorityChartData"
+        title="待办事项优先级分布"
+        height="400px"
+      />
+      <LineChart
+        :xAxisData="todoTrendData.xAxisData"
+        :series="todoTrendData.series"
+        title="新增待办事项趋势"
+        height="400px"
+      />
+      <LineChart
+        :xAxisData="todoCompletionRateData.xAxisData"
+        :series="todoCompletionRateData.series"
+        title="待办事项完成率趋势"
+        height="400px"
+      />
+      <WordcloudChart
+        :data="todoTagCloudData"
+        title="待办事项标签分布"
+        height="400px"
       />
     </el-card>
   </div>

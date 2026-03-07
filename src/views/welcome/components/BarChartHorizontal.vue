@@ -14,22 +14,40 @@ const props = defineProps<{
   height?: string;
 }>();
 
-const chartOptions = computed<ECOption>(() => ({
-  title: props.title ? { text: props.title, left: "center" } : undefined,
-  tooltip: { trigger: "axis" },
-  xAxis: { type: "value" }, // 数值轴
-  yAxis: {
-    type: "category",
-    data: props.data.map(item => item.category)
-  },
-  series: [
-    {
-      name: props.title || "条形图",
-      type: "bar",
-      data: props.data.map(item => item.value),
-      barWidth: "60%"
-    }
-  ],
-  grid: { containLabel: true }
-}));
+const chartOptions = computed<ECOption>(() => {
+  if (!props.data || props.data.length === 0) {
+    return {
+      title: props.title ? { text: props.title, left: "center" } : undefined,
+      graphic: {
+        type: "text",
+        left: "center",
+        top: "center",
+        style: {
+          text: "暂无数据",
+          fontSize: 16,
+          fill: "#999"
+        }
+      }
+    };
+  }
+
+  return {
+    title: props.title ? { text: props.title, left: "center" } : undefined,
+    tooltip: { trigger: "axis" },
+    xAxis: { type: "value" },
+    yAxis: {
+      type: "category",
+      data: props.data.map(item => item.category)
+    },
+    series: [
+      {
+        name: props.title || "条形图",
+        type: "bar",
+        data: props.data.map(item => item.value),
+        barWidth: "60%"
+      }
+    ],
+    grid: { containLabel: true }
+  };
+});
 </script>
