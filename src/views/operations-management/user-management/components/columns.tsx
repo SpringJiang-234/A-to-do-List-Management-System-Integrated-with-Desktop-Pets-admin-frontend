@@ -113,13 +113,15 @@ export function useColumns(
           >
             编辑
           </el-button>
-          <el-button
-            size="small"
-            type="danger"
-            onClick={() => handleDelete(index + 1, row)}
-          >
-            注销
-          </el-button>
+          {row.type !== "管理员" && (
+            <el-button
+              size="small"
+              type="danger"
+              onClick={() => handleDelete(index + 1, row)}
+            >
+              注销
+            </el-button>
+          )}
         </>
       )
     }

@@ -449,7 +449,7 @@ const handleSubmit = async () => {
       gender: formValue.gender ? Number(formValue.gender) : 3,
       birth: formValue.birth as string,
       status: formValue.status ? Number(formValue.status) : 1,
-      type: formValue.type ? Number(formValue.type) : 2
+      type: 2
     };
     const result = await insertUser(userData);
     if (result.code === 200) {
@@ -541,7 +541,7 @@ const handleEditSubmit = async () => {
       gender: formValue.gender ? Number(formValue.gender) : 3,
       birth: formValue.birth as string,
       status: formValue.status ? Number(formValue.status) : 1,
-      type: formValue.type ? Number(formValue.type) : 2
+      type: 2
     };
 
     if (formValue.passwordHash && formValue.passwordHash.trim() !== "") {
@@ -571,6 +571,13 @@ const handleBatchDelete = async () => {
   }
 
   const count = multipleSelection.value.length;
+
+  const hasAdmin = multipleSelection.value.some(row => row.type === "管理员");
+  if (hasAdmin) {
+    ElMessage.warning("管理员用户不能注销");
+    return;
+  }
+
   const ids = multipleSelection.value.map(row => row.id).join(",");
 
   try {
@@ -827,7 +834,11 @@ onMounted(() => {
             </el-select>
           </el-form-item>
           <el-form-item label="类型">
-            <el-select v-model="formData.type" placeholder="请选择类型">
+            <el-select
+              v-model="formData.type"
+              placeholder="请选择类型"
+              disabled
+            >
               <el-option label="管理员" value="1" />
               <el-option label="普通用户" value="2" />
             </el-select>
@@ -907,7 +918,11 @@ onMounted(() => {
             </el-select>
           </el-form-item>
           <el-form-item label="类型">
-            <el-select v-model="editFormData.type" placeholder="请选择类型">
+            <el-select
+              v-model="editFormData.type"
+              placeholder="请选择类型"
+              disabled
+            >
               <el-option label="管理员" value="1" />
               <el-option label="普通用户" value="2" />
             </el-select>
