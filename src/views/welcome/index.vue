@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from "vue";
 import LineChart from "./components/LineChart.vue";
+import PieChart from "./components/PieChart.vue";
 
 import {
   getTotalUsers,
@@ -161,27 +162,38 @@ const userTrendData = computed(() => {
       data: dailyNewUsers.value.map((item: any) => item.count)
     },
     {
-      name: "总用户",
+      name: "用户总数",
       data: dailyTotalUsers.value.map((item: any) => item.total)
     }
   ];
   return { xAxisData, series };
 });
+
+const userStatusChartData = computed(() => {
+  return userStatusDistribution.value.map((item: any) => ({
+    name: item.status || item.name,
+    value: item.count || item.value
+  }));
+});
 </script>
 
 <template>
   <div>
-    <el-card>
+    <el-card shadow="never">
       <template #header>
         <span>用户统计</span>
       </template>
       <LineChart
         :xAxisData="userTrendData.xAxisData"
         :series="userTrendData.series"
-        title="用户增长趋势"
+        title="用户总数与新用户趋势"
         height="400px"
       />
-      <!-- 饼图写这里 -->
+      <PieChart
+        :data="userStatusChartData"
+        title="用户状态分布"
+        height="400px"
+      />
     </el-card>
   </div>
 </template>
