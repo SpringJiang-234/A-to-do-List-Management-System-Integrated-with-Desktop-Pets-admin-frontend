@@ -2,13 +2,10 @@
 import { useColumns } from "./components/columns";
 import { ref, onActivated, onDeactivated, watch } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import "plus-pro-components/es/components/form/style/css";
-import "plus-pro-components/es/components/dialog-form/style/css";
 import {
   type PlusColumn,
   type FieldValues,
-  PlusSearch,
-  PlusDialogForm
+  PlusSearch
 } from "plus-pro-components";
 import { TABLE_HEIGHT } from "@/config";
 import { TableActions } from "@/components/admin-frontend-components/TableActions";
@@ -60,7 +57,16 @@ const searchParams = ref<AnnouncementQuery>({
  * 新增公告对话框状态
  */
 const dialogVisible = ref(false);
-const formData = ref<FieldValues>({});
+const addDetailsRef = ref<DetailsExpose | null>(null);
+const addData = ref<{
+  title: string;
+  content: string;
+  isTop: number;
+}>({
+  title: "",
+  content: "",
+  isTop: 1
+});
 
 /**
  * 编辑公告对话框状态
@@ -94,47 +100,6 @@ const detailData = ref<{ title: string; content: string; isTop: number }>({
   content: "",
   isTop: 1
 });
-
-/**
- * 对话框表单列配置
- */
-const dialogColumns: PlusColumn[] = [
-  {
-    label: "标题",
-    prop: "title",
-    valueType: "copy",
-    fieldProps: {
-      placeholder: "请输入标题"
-    }
-  },
-  {
-    label: "内容",
-    prop: "content",
-    valueType: "textarea",
-    fieldProps: {
-      placeholder: "请输入内容",
-      rows: 4
-    }
-  },
-  {
-    label: "是否置顶",
-    prop: "isTop",
-    valueType: "select",
-    fieldProps: {
-      placeholder: "请选择是否置顶"
-    },
-    options: [
-      {
-        label: "否",
-        value: "1"
-      },
-      {
-        label: "是",
-        value: "2"
-      }
-    ]
-  }
-];
 
 /**
  * 搜索列
@@ -267,10 +232,10 @@ const handleRest = () => {
  * 新增公告
  */
 const handleAdd = () => {
-  formData.value = {
+  addData.value = {
     title: "",
     content: "",
-    isTop: "1"
+    isTop: 1
   };
   dialogVisible.value = true;
 };
@@ -280,7 +245,17 @@ const handleAdd = () => {
  */
 const handleSubmit = async () => {
   try {
-    const result = await insertAnnouncement(formData.value as AnnouncementDTO);
+    if (!addDetailsRef.value) {
+      ElMessage.error("新增组件未就绪");
+      return;
+    }
+
+    const data = {
+      title: addDetailsRef.value.title,
+      content: addDetailsRef.value.text,
+      isTop: addDetailsRef.value.isTop
+    } as AnnouncementDTO;
+    const result = await insertAnnouncement(data);
     if (result.code === 200) {
       ElMessage.success(result.msg || "新增成功");
       dialogVisible.value = false;
@@ -570,13 +545,23 @@ watch(
       </div>
 
       <!-- 新增公告对话框 -->
-      <PlusDialogForm
-        v-model:visible="dialogVisible"
-        v-model="formData"
-        :dialog="{ title: '新增公告' }"
-        :form="{ columns: dialogColumns }"
-        @confirm="handleSubmit"
-      />
+      <el-dialog
+        v-model="dialogVisible"
+        title="新增公告"
+        width="80%"
+        :close-on-click-modal="false"
+      >
+        <Details
+          v-if="dialogVisible"
+          ref="addDetailsRef"
+          :title="addData.title"
+          :content="addData.content"
+          :is-top="addData.isTop"
+          mode="edit"
+          @confirm="handleSubmit"
+          @cancel="() => (dialogVisible = false)"
+        />
+      </el-dialog>
 
       <!-- 编辑公告对话框 -->
       <el-dialog
@@ -586,6 +571,7 @@ watch(
         :close-on-click-modal="false"
       >
         <Details
+          v-if="editDialogVisible"
           ref="editDetailsRef"
           :title="editData.title"
           :content="editData.content"

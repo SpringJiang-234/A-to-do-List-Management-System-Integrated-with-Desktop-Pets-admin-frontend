@@ -108,17 +108,6 @@ watch(
         <template #dropdown>
           <el-dropdown-menu class="logout">
             <el-dropdown-item @click="logout">
-              <IconifyIconOffline :icon="RiUserLine" style="margin: 5px" />
-              个人资料
-            </el-dropdown-item>
-            <el-dropdown-item @click="logout">
-              <IconifyIconOffline
-                :icon="RiLockPasswordLine"
-                style="margin: 5px"
-              />
-              修改密码
-            </el-dropdown-item>
-            <el-dropdown-item @click="logout">
               <IconifyIconOffline
                 :icon="LogoutCircleRLine"
                 style="margin: 5px"
