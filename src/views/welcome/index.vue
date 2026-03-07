@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
+import LineChart from "./components/LineChart.vue";
+
 import {
   getTotalUsers,
   getNewUsersByDate,
-  getUserTypeDistribution,
   getUserStatusDistribution,
   getUserGenderDistribution,
   getUserBirthMonthDistribution,
@@ -40,6 +41,8 @@ const userBirthMonthDistribution = ref([]);
 const userRegistrationHeatmap = ref([]);
 const dailyNewUsers = ref([]);
 const dailyTotalUsers = ref([]);
+const dailyNewUsersDate = ref([]);
+const dailyTotalUsersDate = ref([]);
 
 const totalTodos = ref(0);
 const newTodosByDate = ref(0);
@@ -71,7 +74,6 @@ const fetchAllData = async () => {
 
     const totalUsersRes = await getTotalUsers();
     const newUsersRes = await getNewUsersByDate(today);
-    const userTypeRes = await getUserTypeDistribution();
     const userStatusRes = await getUserStatusDistribution();
     const userGenderRes = await getUserGenderDistribution();
     const userBirthMonthRes = await getUserBirthMonthDistribution();
@@ -107,13 +109,19 @@ const fetchAllData = async () => {
 
     totalUsers.value = totalUsersRes.data;
     newUsersByDate.value = newUsersRes.data;
-    userTypeDistribution.value = userTypeRes.data;
     userStatusDistribution.value = userStatusRes.data;
     userGenderDistribution.value = userGenderRes.data;
     userBirthMonthDistribution.value = userBirthMonthRes.data;
     userRegistrationHeatmap.value = userHeatmapRes.data;
     dailyNewUsers.value = dailyNewUsersRes.data;
     dailyTotalUsers.value = dailyTotalUsersRes.data;
+
+    dailyNewUsersDate.value = dailyNewUsersRes.data.map(
+      (item: any) => item.date
+    );
+    dailyTotalUsersDate.value = dailyTotalUsersRes.data.map(
+      (item: any) => item.date
+    );
 
     totalTodos.value = totalTodosRes.data;
     newTodosByDate.value = newTodosRes.data;
@@ -144,6 +152,21 @@ const fetchAllData = async () => {
 onMounted(() => {
   fetchAllData();
 });
+
+const userTrendData = computed(() => {
+  const xAxisData = dailyNewUsersDate.value;
+  const series = [
+    {
+      name: "新增用户",
+      data: dailyNewUsers.value.map((item: any) => item.count)
+    },
+    {
+      name: "总用户",
+      data: dailyTotalUsers.value.map((item: any) => item.total)
+    }
+  ];
+  return { xAxisData, series };
+});
 </script>
 
 <template>
@@ -152,318 +175,13 @@ onMounted(() => {
       <template #header>
         <span>用户统计</span>
       </template>
-      <el-row :gutter="20">
-        <el-col :span="8">
-          <el-statistic title="用户总数" :value="totalUsers" />
-        </el-col>
-        <el-col :span="8">
-          <el-statistic title="今日新增" :value="newUsersByDate" />
-        </el-col>
-        <el-col :span="8">
-          <el-statistic title="待办总数" :value="totalTodos" />
-        </el-col>
-      </el-row>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>用户类型分布</span>
-      </template>
-      <div
-        v-for="(item, index) in userTypeDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        类型: {{ item.type }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>用户状态分布</span>
-      </template>
-      <div
-        v-for="(item, index) in userStatusDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        状态: {{ item.status }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>用户性别分布</span>
-      </template>
-      <div
-        v-for="(item, index) in userGenderDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        性别: {{ item.gender }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>用户生日月份分布</span>
-      </template>
-      <div
-        v-for="(item, index) in userBirthMonthDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        月份: {{ item.month }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>用户注册热力图数据</span>
-      </template>
-      <div
-        v-for="(item, index) in userRegistrationHeatmap"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        日期: {{ item.date }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>每日新增用户趋势</span>
-      </template>
-      <div
-        v-for="(item, index) in dailyNewUsers"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        日期: {{ item.date }} - 新增: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>每日总用户趋势</span>
-      </template>
-      <div
-        v-for="(item, index) in dailyTotalUsers"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        日期: {{ item.date }} - 总数: {{ item.total }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>待办事项统计</span>
-      </template>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-statistic title="待办总数" :value="totalTodos" />
-        </el-col>
-        <el-col :span="12">
-          <el-statistic title="今日新增" :value="newTodosByDate" />
-        </el-col>
-      </el-row>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>待办状态分布</span>
-      </template>
-      <div
-        v-for="(item, index) in todoStatusDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        状态: {{ item.status }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>待办优先级分布</span>
-      </template>
-      <div
-        v-for="(item, index) in todoPriorityDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        优先级: {{ item.priority }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>每日新增待办趋势</span>
-      </template>
-      <div
-        v-for="(item, index) in dailyNewTodos"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        日期: {{ item.date }} - 新增: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>待办截止时间预警</span>
-      </template>
-      <div
-        v-for="(item, index) in todoDeadlineWarning"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        待办ID: {{ item.todoId }} - 截止时间: {{ item.deadline }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>待办类别分布</span>
-      </template>
-      <div
-        v-for="(item, index) in todoCategoryDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        类别: {{ item.category }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>待办标签频率</span>
-      </template>
-      <div
-        v-for="(item, index) in todoTagFrequency"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        标签: {{ item.tag }} - 频率: {{ item.frequency }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>待办完成率趋势</span>
-      </template>
-      <div
-        v-for="(item, index) in todoCompletionRateTrend"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        日期: {{ item.date }} - 完成率: {{ item.completionRate }}%
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>宠物等级分布</span>
-      </template>
-      <div
-        v-for="(item, index) in petLevelDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        等级: {{ item.level }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>宠物活力值分布</span>
-      </template>
-      <div
-        v-for="(item, index) in petEnergyDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        活力值: {{ item.energy }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>宠物心情值分布</span>
-      </template>
-      <div
-        v-for="(item, index) in petMoodDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        心情值: {{ item.mood }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>宠物亲密度分布</span>
-      </template>
-      <div
-        v-for="(item, index) in petIntimacyDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        亲密度: {{ item.intimacy }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>最高等级宠物排行</span>
-      </template>
-      <div
-        v-for="(item, index) in topLevelPets"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        排名: {{ index + 1 }} - 宠物ID: {{ item.petId }} - 等级:
-        {{ item.level }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>反馈状态分布</span>
-      </template>
-      <div
-        v-for="(item, index) in feedbackStatusDistribution"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        状态: {{ item.status }} - 数量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>每日反馈提交量</span>
-      </template>
-      <div
-        v-for="(item, index) in dailyFeedbackSubmission"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        日期: {{ item.date }} - 提交量: {{ item.count }}
-      </div>
-    </el-card>
-
-    <el-card style="margin-top: 20px">
-      <template #header>
-        <span>公告置顶比例</span>
-      </template>
-      <div
-        v-for="(item, index) in announcementTopRatio"
-        :key="index"
-        style="margin-bottom: 10px"
-      >
-        置顶: {{ item.isTop }} - 数量: {{ item.count }}
-      </div>
+      <LineChart
+        :xAxisData="userTrendData.xAxisData"
+        :series="userTrendData.series"
+        title="用户增长趋势"
+        height="400px"
+      />
+      <!-- 饼图写这里 -->
     </el-card>
   </div>
 </template>

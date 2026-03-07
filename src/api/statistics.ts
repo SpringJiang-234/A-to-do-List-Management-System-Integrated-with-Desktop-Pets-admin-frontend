@@ -23,14 +23,6 @@ export const getNewUsersByDate = (date: string) => {
   );
 };
 
-// 获取用户类型分布
-export const getUserTypeDistribution = () => {
-  return http.request<StatisticsResult>(
-    "get",
-    "/api/statistics/user/type-distribution"
-  );
-};
-
 // 获取用户状态分布
 export const getUserStatusDistribution = () => {
   return http.request<StatisticsResult>(
