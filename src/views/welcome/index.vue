@@ -174,8 +174,8 @@ const userStatusChartData = computed(() => {
     2: "已注销"
   };
   return userStatusDistribution.value.map((item: any) => ({
-    name: statusMap[item.status] || item.status || item.name,
-    value: item.count || item.value
+    name: statusMap[item.status],
+    value: item.count
   }));
 });
 
@@ -186,8 +186,8 @@ const userGenderChartData = computed(() => {
     3: "未知"
   };
   return userGenderDistribution.value.map((item: any) => ({
-    name: genderMap[item.gender] || item.gender || item.name,
-    value: item.count || item.value
+    name: genderMap[item.gender],
+    value: item.count
   }));
 });
 </script>

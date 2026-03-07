@@ -1,23 +1,137 @@
 import { http } from "@/utils/http";
 
-// 返回结果类型
-export type StatisticsResult = {
+export type StatisticsResult<T = any> = {
   code: number;
   msg: string;
-  data: any;
+  data: T;
   success?: boolean;
+};
+
+export type UserStatusDistributionItem = {
+  status: number;
+  count: number;
+};
+
+export type UserGenderDistributionItem = {
+  gender: number;
+  count: number;
+};
+
+export type UserBirthMonthDistributionItem = {
+  month: number;
+  count: number;
+};
+
+export type UserRegistrationHeatmapItem = {
+  date: string;
+  count: number;
+};
+
+export type DailyNewUsersItem = {
+  date: string;
+  count: number;
+};
+
+export type DailyTotalUsersItem = {
+  date: string;
+  total: number;
+};
+
+export type TodoStatusDistributionItem = {
+  status: number;
+  count: number;
+};
+
+export type TodoPriorityDistributionItem = {
+  priority: number;
+  count: number;
+};
+
+export type DailyNewTodosItem = {
+  date: string;
+  count: number;
+};
+
+export type TodoDeadlineWarningItem = {
+  deadline: string;
+  count: number;
+};
+
+export type TodoCategoryDistributionItem = {
+  categoryId: number;
+  categoryName: string;
+  count: number;
+};
+
+export type TodoTagFrequencyItem = {
+  tagId: number;
+  tagName: string;
+  frequency: number;
+};
+
+export type TodoCompletionRateTrendItem = {
+  date: string;
+  total: number;
+  completed: number;
+  completionRate: number;
+};
+
+export type PetLevelDistributionItem = {
+  levelRangeStart: number;
+  levelRangeEnd: number;
+  count: number;
+};
+
+export type PetEnergyDistributionItem = {
+  energy: number;
+  count: number;
+};
+
+export type PetMoodDistributionItem = {
+  mood: number;
+  count: number;
+};
+
+export type PetIntimacyDistributionItem = {
+  intimacy: number;
+  count: number;
+};
+
+export type TopLevelPetItem = {
+  petId: number;
+  petNickname: string;
+  petLevel: number;
+  userNickname: string;
+};
+
+export type FeedbackStatusDistributionItem = {
+  status: number;
+  count: number;
+};
+
+export type DailyFeedbackSubmissionItem = {
+  date: string;
+  count: number;
+};
+
+export type AnnouncementTopRatioItem = {
+  isTop: number;
+  count: number;
 };
 
 /* 用户分析相关API */
 
 // 获取用户总数
 export const getTotalUsers = () => {
-  return http.request<StatisticsResult>("get", "/api/statistics/user/total");
+  return http.request<StatisticsResult<number>>(
+    "get",
+    "/api/statistics/user/total"
+  );
 };
 
 // 获取指定日期新增用户数
 export const getNewUsersByDate = (date: string) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<number>>(
     "get",
     `/api/statistics/user/new-by-date?date=${date}`
   );
@@ -25,7 +139,7 @@ export const getNewUsersByDate = (date: string) => {
 
 // 获取用户状态分布
 export const getUserStatusDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<UserStatusDistributionItem[]>>(
     "get",
     "/api/statistics/user/status-distribution"
   );
@@ -33,7 +147,7 @@ export const getUserStatusDistribution = () => {
 
 // 获取用户性别分布
 export const getUserGenderDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<UserGenderDistributionItem[]>>(
     "get",
     "/api/statistics/user/gender-distribution"
   );
@@ -41,7 +155,7 @@ export const getUserGenderDistribution = () => {
 
 // 获取用户生日月份分布
 export const getUserBirthMonthDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<UserBirthMonthDistributionItem[]>>(
     "get",
     "/api/statistics/user/birth-month-distribution"
   );
@@ -52,7 +166,7 @@ export const getUserRegistrationHeatmap = (
   startDate: string,
   endDate: string
 ) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<UserRegistrationHeatmapItem[]>>(
     "get",
     `/api/statistics/user/registration-heatmap?startDate=${startDate}&endDate=${endDate}`
   );
@@ -60,7 +174,7 @@ export const getUserRegistrationHeatmap = (
 
 // 获取每日新增用户趋势
 export const getDailyNewUsers = (startDate: string, endDate: string) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<DailyNewUsersItem[]>>(
     "get",
     `/api/statistics/user/daily-new?startDate=${startDate}&endDate=${endDate}`
   );
@@ -68,7 +182,7 @@ export const getDailyNewUsers = (startDate: string, endDate: string) => {
 
 // 获取每日总用户趋势
 export const getDailyTotalUsers = (startDate: string, endDate: string) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<DailyTotalUsersItem[]>>(
     "get",
     `/api/statistics/user/daily-total?startDate=${startDate}&endDate=${endDate}`
   );
@@ -78,12 +192,15 @@ export const getDailyTotalUsers = (startDate: string, endDate: string) => {
 
 // 获取待办总数
 export const getTotalTodos = () => {
-  return http.request<StatisticsResult>("get", "/api/statistics/todo/total");
+  return http.request<StatisticsResult<number>>(
+    "get",
+    "/api/statistics/todo/total"
+  );
 };
 
 // 获取指定日期新增待办数
 export const getNewTodosByDate = (date: string) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<number>>(
     "get",
     `/api/statistics/todo/new-by-date?date=${date}`
   );
@@ -91,7 +208,7 @@ export const getNewTodosByDate = (date: string) => {
 
 // 获取待办状态分布
 export const getTodoStatusDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<TodoStatusDistributionItem[]>>(
     "get",
     "/api/statistics/todo/status-distribution"
   );
@@ -99,7 +216,7 @@ export const getTodoStatusDistribution = () => {
 
 // 获取待办优先级分布
 export const getTodoPriorityDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<TodoPriorityDistributionItem[]>>(
     "get",
     "/api/statistics/todo/priority-distribution"
   );
@@ -107,7 +224,7 @@ export const getTodoPriorityDistribution = () => {
 
 // 获取每日新增待办趋势
 export const getDailyNewTodos = (startDate: string, endDate: string) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<DailyNewTodosItem[]>>(
     "get",
     `/api/statistics/todo/daily-new?startDate=${startDate}&endDate=${endDate}`
   );
@@ -115,7 +232,7 @@ export const getDailyNewTodos = (startDate: string, endDate: string) => {
 
 // 获取待办截止时间预警
 export const getTodoDeadlineWarning = (days: number) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<TodoDeadlineWarningItem[]>>(
     "get",
     `/api/statistics/todo/deadline-warning?days=${days}`
   );
@@ -123,7 +240,7 @@ export const getTodoDeadlineWarning = (days: number) => {
 
 // 获取待办类别分布
 export const getTodoCategoryDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<TodoCategoryDistributionItem[]>>(
     "get",
     "/api/statistics/todo/category-distribution"
   );
@@ -131,7 +248,7 @@ export const getTodoCategoryDistribution = () => {
 
 // 获取待办标签频率
 export const getTodoTagFrequency = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<TodoTagFrequencyItem[]>>(
     "get",
     "/api/statistics/todo/tag-frequency"
   );
@@ -142,7 +259,7 @@ export const getTodoCompletionRateTrend = (
   startDate: string,
   endDate: string
 ) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<TodoCompletionRateTrendItem[]>>(
     "get",
     `/api/statistics/todo/completion-rate-trend?startDate=${startDate}&endDate=${endDate}`
   );
@@ -152,7 +269,7 @@ export const getTodoCompletionRateTrend = (
 
 // 获取宠物等级分布
 export const getPetLevelDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<PetLevelDistributionItem[]>>(
     "get",
     "/api/statistics/pet/level-distribution"
   );
@@ -160,7 +277,7 @@ export const getPetLevelDistribution = () => {
 
 // 获取宠物活力值分布
 export const getPetEnergyDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<PetEnergyDistributionItem[]>>(
     "get",
     "/api/statistics/pet/energy-distribution"
   );
@@ -168,7 +285,7 @@ export const getPetEnergyDistribution = () => {
 
 // 获取宠物心情值分布
 export const getPetMoodDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<PetMoodDistributionItem[]>>(
     "get",
     "/api/statistics/pet/mood-distribution"
   );
@@ -176,7 +293,7 @@ export const getPetMoodDistribution = () => {
 
 // 获取宠物亲密度分布
 export const getPetIntimacyDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<PetIntimacyDistributionItem[]>>(
     "get",
     "/api/statistics/pet/intimacy-distribution"
   );
@@ -184,7 +301,7 @@ export const getPetIntimacyDistribution = () => {
 
 // 获取最高等级宠物排行
 export const getTopLevelPets = (limit: number = 10) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<TopLevelPetItem[]>>(
     "get",
     `/api/statistics/pet/top-level?limit=${limit}`
   );
@@ -194,7 +311,7 @@ export const getTopLevelPets = (limit: number = 10) => {
 
 // 获取反馈状态分布
 export const getFeedbackStatusDistribution = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<FeedbackStatusDistributionItem[]>>(
     "get",
     "/api/statistics/feedback/status-distribution"
   );
@@ -205,7 +322,7 @@ export const getDailyFeedbackSubmission = (
   startDate: string,
   endDate: string
 ) => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<DailyFeedbackSubmissionItem[]>>(
     "get",
     `/api/statistics/feedback/daily-submission?startDate=${startDate}&endDate=${endDate}`
   );
@@ -215,7 +332,7 @@ export const getDailyFeedbackSubmission = (
 
 // 获取公告置顶比例
 export const getAnnouncementTopRatio = () => {
-  return http.request<StatisticsResult>(
+  return http.request<StatisticsResult<AnnouncementTopRatioItem[]>>(
     "get",
     "/api/statistics/announcement/top-ratio"
   );
