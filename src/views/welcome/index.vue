@@ -69,61 +69,41 @@ const fetchAllData = async () => {
       .toISOString()
       .split("T")[0];
 
-    const [
-      totalUsersRes,
-      newUsersRes,
-      userTypeRes,
-      userStatusRes,
-      userGenderRes,
-      userBirthMonthRes,
-      userHeatmapRes,
-      dailyNewUsersRes,
-      dailyTotalUsersRes,
-      totalTodosRes,
-      newTodosRes,
-      todoStatusRes,
-      todoPriorityRes,
-      dailyNewTodosRes,
-      todoDeadlineRes,
-      todoCategoryRes,
-      todoTagRes,
-      todoCompletionRes,
-      petLevelRes,
-      petEnergyRes,
-      petMoodRes,
-      petIntimacyRes,
-      topPetsRes,
-      feedbackStatusRes,
-      dailyFeedbackRes,
-      announcementRes
-    ] = await Promise.all([
-      getTotalUsers(),
-      getNewUsersByDate(today),
-      getUserTypeDistribution(),
-      getUserStatusDistribution(),
-      getUserGenderDistribution(),
-      getUserBirthMonthDistribution(),
-      getUserRegistrationHeatmap(thirtyDaysAgo, today),
-      getDailyNewUsers(thirtyDaysAgo, today),
-      getDailyTotalUsers(thirtyDaysAgo, today),
-      getTotalTodos(),
-      getNewTodosByDate(today),
-      getTodoStatusDistribution(),
-      getTodoPriorityDistribution(),
-      getDailyNewTodos(thirtyDaysAgo, today),
-      getTodoDeadlineWarning(7),
-      getTodoCategoryDistribution(),
-      getTodoTagFrequency(),
-      getTodoCompletionRateTrend(thirtyDaysAgo, today),
-      getPetLevelDistribution(),
-      getPetEnergyDistribution(),
-      getPetMoodDistribution(),
-      getPetIntimacyDistribution(),
-      getTopLevelPets(10),
-      getFeedbackStatusDistribution(),
-      getDailyFeedbackSubmission(thirtyDaysAgo, today),
-      getAnnouncementTopRatio()
-    ]);
+    const totalUsersRes = await getTotalUsers();
+    const newUsersRes = await getNewUsersByDate(today);
+    const userTypeRes = await getUserTypeDistribution();
+    const userStatusRes = await getUserStatusDistribution();
+    const userGenderRes = await getUserGenderDistribution();
+    const userBirthMonthRes = await getUserBirthMonthDistribution();
+    const userHeatmapRes = await getUserRegistrationHeatmap(
+      thirtyDaysAgo,
+      today
+    );
+    const dailyNewUsersRes = await getDailyNewUsers(thirtyDaysAgo, today);
+    const dailyTotalUsersRes = await getDailyTotalUsers(thirtyDaysAgo, today);
+    const totalTodosRes = await getTotalTodos();
+    const newTodosRes = await getNewTodosByDate(today);
+    const todoStatusRes = await getTodoStatusDistribution();
+    const todoPriorityRes = await getTodoPriorityDistribution();
+    const dailyNewTodosRes = await getDailyNewTodos(thirtyDaysAgo, today);
+    const todoDeadlineRes = await getTodoDeadlineWarning(7);
+    const todoCategoryRes = await getTodoCategoryDistribution();
+    const todoTagRes = await getTodoTagFrequency();
+    const todoCompletionRes = await getTodoCompletionRateTrend(
+      thirtyDaysAgo,
+      today
+    );
+    const petLevelRes = await getPetLevelDistribution();
+    const petEnergyRes = await getPetEnergyDistribution();
+    const petMoodRes = await getPetMoodDistribution();
+    const petIntimacyRes = await getPetIntimacyDistribution();
+    const topPetsRes = await getTopLevelPets(10);
+    const feedbackStatusRes = await getFeedbackStatusDistribution();
+    const dailyFeedbackRes = await getDailyFeedbackSubmission(
+      thirtyDaysAgo,
+      today
+    );
+    const announcementRes = await getAnnouncementTopRatio();
 
     totalUsers.value = totalUsersRes.data;
     newUsersByDate.value = newUsersRes.data;
