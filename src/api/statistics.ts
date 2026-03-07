@@ -74,6 +74,14 @@ export const getDailyNewUsers = (startDate: string, endDate: string) => {
   );
 };
 
+// 获取每日总用户趋势
+export const getDailyTotalUsers = (startDate: string, endDate: string) => {
+  return http.request<StatisticsResult>(
+    "get",
+    `/api/statistics/user/daily-total?startDate=${startDate}&endDate=${endDate}`
+  );
+};
+
 /* 待办事项分析相关API */
 
 // 获取待办总数
