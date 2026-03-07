@@ -35,7 +35,6 @@ const loading = ref(false);
 
 const totalUsers = ref(0);
 const newUsersByDate = ref(0);
-const userTypeDistribution = ref([]);
 const userStatusDistribution = ref([]);
 const userGenderDistribution = ref([]);
 const userBirthMonthDistribution = ref([]);
@@ -170,8 +169,24 @@ const userTrendData = computed(() => {
 });
 
 const userStatusChartData = computed(() => {
+  const statusMap: Record<number, string> = {
+    1: "正常",
+    2: "已注销"
+  };
   return userStatusDistribution.value.map((item: any) => ({
-    name: item.status || item.name,
+    name: statusMap[item.status] || item.status || item.name,
+    value: item.count || item.value
+  }));
+});
+
+const userGenderChartData = computed(() => {
+  const genderMap: Record<number, string> = {
+    1: "男",
+    2: "女",
+    3: "未知"
+  };
+  return userGenderDistribution.value.map((item: any) => ({
+    name: genderMap[item.gender] || item.gender || item.name,
     value: item.count || item.value
   }));
 });
@@ -192,6 +207,11 @@ const userStatusChartData = computed(() => {
       <PieChart
         :data="userStatusChartData"
         title="用户状态分布"
+        height="400px"
+      />
+      <PieChart
+        :data="userGenderChartData"
+        title="用户性别分布"
         height="400px"
       />
     </el-card>
