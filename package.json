@@ -58,6 +58,7 @@
     "dayjs": "^1.11.18",
     "echart": "^0.1.3",
     "echarts": "^6.0.0",
+    "echarts-wordcloud": "^2.1.0",
     "element-plus": "^2.11.5",
     "js-cookie": "^3.0.5",
     "localforage": "^1.10.0",
