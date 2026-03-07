@@ -39,9 +39,18 @@ export function useNav() {
 
   /** 头像（如果头像为空则使用 src/assets/user.jpg ） */
   const userAvatar = computed(() => {
-    return isAllEmpty(useUserStoreHook()?.avatar)
-      ? Avatar
-      : useUserStoreHook()?.avatar;
+    const avatar = useUserStoreHook()?.avatar;
+    if (isAllEmpty(avatar)) {
+      return Avatar;
+    }
+
+    try {
+      const url = new URL(avatar);
+      return url.origin + url.pathname;
+    } catch (e) {
+      console.warn("解析头像URL失败:", e);
+      return avatar;
+    }
   });
 
   /** 昵称（如果昵称为空则显示用户名） */

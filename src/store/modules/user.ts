@@ -77,6 +77,7 @@ export const useUserStore = defineStore("pure-user", {
                 refreshToken: data.data.token,
                 username: data.data.username,
                 nickname: data.data.username,
+                avatar: data.data.avatar,
                 roles: data.data.role ? [data.data.role] : [],
                 permissions: []
               };

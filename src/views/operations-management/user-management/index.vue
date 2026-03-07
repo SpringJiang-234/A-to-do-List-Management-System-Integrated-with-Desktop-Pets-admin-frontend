@@ -510,7 +510,7 @@ const handleEdit = async (row: any) => {
 
       editFormData.value = {
         account: data.account,
-        passwordHash: data.passwordHash,
+        passwordHash: "",
         nickname: data.nickname,
         avatar: data.avatar,
         gender: genderMap[data.gender || "未知"] || "3",
@@ -536,7 +536,6 @@ const handleEditSubmit = async () => {
     const userData: UserDTO = {
       id: editId.value,
       account: formValue.account as string,
-      passwordHash: formValue.passwordHash as string,
       nickname: formValue.nickname as string,
       avatar: formValue.avatar as string,
       gender: formValue.gender ? Number(formValue.gender) : 3,
@@ -544,6 +543,11 @@ const handleEditSubmit = async () => {
       status: formValue.status ? Number(formValue.status) : 1,
       type: formValue.type ? Number(formValue.type) : 2
     };
+
+    if (formValue.passwordHash && formValue.passwordHash.trim() !== "") {
+      userData.passwordHash = formValue.passwordHash as string;
+    }
+
     const result = await updateUser(userData);
     if (result.code === 200) {
       ElMessage.success(result.msg || "修改成功");
@@ -852,7 +856,7 @@ onMounted(() => {
             <el-input
               v-model="editFormData.passwordHash"
               type="password"
-              placeholder="请输入密码"
+              placeholder="留空则不修改密码"
             />
           </el-form-item>
           <el-form-item label="昵称" prop="nickname">
