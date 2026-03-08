@@ -390,7 +390,6 @@ const topLevelPetsData = computed(() => {
         title="待办事项完成率趋势"
         height="400px"
       />
-      <!-- TODO: 待办事项标签分布 -->
       <WordcloudChart
         :data="todoTagCloudData"
         title="待办事项标签分布"
