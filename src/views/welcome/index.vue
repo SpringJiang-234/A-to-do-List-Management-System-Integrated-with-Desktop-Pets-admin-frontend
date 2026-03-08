@@ -224,10 +224,10 @@ const todoStatusChartData = computed(() => {
 
 const todoPriorityChartData = computed(() => {
   const priorityMap: Record<number, string> = {
-    0: "无优先级",
-    1: "低",
-    2: "中",
-    3: "高"
+    1: "不重要不紧急",
+    2: "不重要但紧急",
+    3: "重要不紧急",
+    4: "重要且紧急"
   };
   return todoPriorityDistribution.value.map((item: any) => ({
     name: priorityMap[item.priority] || item.priority,
