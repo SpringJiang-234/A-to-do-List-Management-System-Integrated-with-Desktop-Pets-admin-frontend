@@ -112,33 +112,42 @@ const handleAvatarUpload = async (options: any) => {
     console.log("=== 开始上传头像 ===");
     console.log("完整上传选项:", JSON.stringify(options, null, 2));
 
-    // 检查 options.file 的结构
     const file = options.file;
-    console.log("文件对象:", file);
-    console.log("文件对象类型:", typeof file);
-    console.log("文件对象属性:", Object.keys(file));
-
-    // 尝试获取原始 File 对象
     const actualFile = file.raw || file;
-    console.log("实际文件:", actualFile);
-    console.log("实际文件类型:", typeof actualFile);
-    console.log("是否为File对象:", actualFile instanceof File);
 
     if (actualFile instanceof File) {
       console.log("File对象信息:");
       console.log("  名称:", actualFile.name);
       console.log("  大小:", actualFile.size);
       console.log("  类型:", actualFile.type);
+
+      const allowedTypes = [
+        "image/jpeg",
+        "image/png",
+        "image/gif",
+        "image/webp",
+        "image/jpg"
+      ];
+      if (!allowedTypes.includes(actualFile.type)) {
+        ElMessage.error("只支持上传图片格式（JPG、PNG、GIF、WebP）");
+        return;
+      }
+
+      const maxSize = 5 * 1024 * 1024;
+      if (actualFile.size > maxSize) {
+        ElMessage.error("图片大小不能超过 5MB");
+        return;
+      }
     } else {
       console.warn("不是File对象:", actualFile);
+      ElMessage.error("文件格式错误");
+      return;
     }
 
-    // 测试 FormData 构建
     const testFormData = new FormData();
     testFormData.append("file", actualFile);
     console.log("FormData 已创建");
 
-    // 调用上传函数
     console.log("准备调用 uploadAvatar 函数");
     const response = await uploadAvatar(actualFile);
     console.log("上传响应:", response);
